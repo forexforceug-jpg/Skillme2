@@ -1,0 +1,28 @@
+﻿:root {
+  --bg-white: #FFFFFF;
+  --bg-pale-blue: #F5F7FA;
+  --bg-light-blue-gray: #EEF2F7;
+  --text-navy: #0F2137;
+  --text-navy-deep: #0A1929;
+  --text-gray-blue: #5A6B7F;
+  --accent-teal: #0D7377;
+  --accent-teal-dark: #095456;
+  --accent-green: #14B87A;
+  --accent-mint: #7EE0B8;
+  --border-light: #E2E8F0;
+  --border-medium: #CBD5E0;
+  --star-orange: #F59E0B;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --font-primary: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --container-max: 1280px;
+  --container-padding: 2rem;
+}
