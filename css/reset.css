@@ -11,8 +11,8 @@ html {
 
 body {
   font-family: var(--font-primary);
-  color: var(--text-navy);
-  background: var(--bg-white);
+  color: #fff;
+  background: var(--navy-900);
   line-height: 1.6;
   font-size: 16px;
 }

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skillme2 — Learn Trading. One Lesson at a Time.</title>
+  <meta name="description" content="Book live 1:1 trading lessons with verified trader-mentors. Pay per lesson. No subscriptions.">
+  <meta name="theme-color" content="#061019">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar__inner">
+      <a href="#" class="navbar__logo" aria-label="Skillme2 home">
+        <img src="assets/logo/skillme2-logo.svg" alt="Skillme2">
+      </a>
+
+      <nav class="navbar__links" aria-label="Primary">
+        <a href="#mentors">Browse Mentors</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#become-mentor">Become a Mentor</a>
+      </nav>
+
+      <div class="navbar__actions">
+  <div class="navbar__search-field">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" placeholder="Search mentors…" autocomplete="off">
+  </div>
+  <button class="navbar__search-btn" aria-label="Toggle search">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </svg>
+  </button>
+  <button class="btn btn--navy" data-modal="auth">Sign In</button>
+</div>
+    </div>
+  </header>
+
+ <!-- ============ HERO (FULL-BLEED VIDEO) ============ -->
+<section class="hero">
+  <div class="hero__video">
+    <video autoplay muted loop playsinline>
+      <source src="assets/images/hero.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero__overlay"></div>
+
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <span class="eyebrow">Real traders. Real lessons.</span>
+
+      <h1 class="hero__title">
+        Learn trading from those who actually trade.
+      </h1>
+
+      <p class="hero__desc">
+        Book live 1:1 sessions with verified trader-mentors. Pay per lesson.
+        No subscriptions. No lock-in. Just the mentor you need, when you need them.
+      </p>
+
+      <div class="search-bar">
+        <svg class="search-bar__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          id="mentor-search"
+          placeholder="Search by strategy, instrument, or mentor name…"
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="filter-row" role="group" aria-label="Filters">
+        <button class="filter-chip" data-filter="price">
+          Price Range
+          <span class="arrow">▾</span>
+        </button>
+        <button class="filter-chip" data-filter="availability">
+          Availability
+          <span class="arrow">▾</span>
+        </button>
+        <button class="filter-chip" data-filter="specialty">
+          Specialty
+          <span class="arrow">▾</span>
+        </button>
+        <button class="filter-chip" data-filter="rating">
+          Rating
+          <span class="arrow">▾</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- ============ STAT BAR (DARK) ============ -->
+  <section class="stat-bar">
+    <div class="container stat-bar__inner">
+      <div class="stat">
+        <span class="stat__value">250+</span>
+        <span class="stat__label">Verified Mentors</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">12,000+</span>
+        <span class="stat__label">Lessons Delivered</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">$18</span>
+        <span class="stat__label">Avg. Lesson Price</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">7 Days</span>
+        <span class="stat__label">Mentor Payout Cycle</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MENTOR GRID (LIGHT) ============ -->
+  <section class="mentors" id="mentors">
+    <div class="container">
+
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Featured Mentors</span>
+          <h2 class="section-title">Find Your Perfect Mentor</h2>
+          <p class="section-desc">
+            Explore verified trader-mentors, compare their expertise, rates, and availability,
+            and book a lesson to start learning on your own terms.
+          </p>
+        </div>
+
+        <div class="section-controls">
+          <button class="sort-btn">
+            Sort by: Most Rated
+            <span class="arrow">▾</span>
+          </button>
+
+          <div class="view-toggle" role="group" aria-label="View mode">
+            <button class="view-toggle__btn is-active" data-view="grid" aria-label="Grid view">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+              </svg>
+            </button>
+            <button class="view-toggle__btn" data-view="list" aria-label="List view">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="4" width="18" height="3" rx="1.5"/>
+                <rect x="3" y="10.5" width="18" height="3" rx="1.5"/>
+                <rect x="3" y="17" width="18" height="3" rx="1.5"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mentor-grid" id="mentor-grid">
+        <!-- Populated by js/mentor-grid.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS (DARK) ============ -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Simple Process</span>
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-desc">
+            Find a mentor and start learning live on Zoom in three simple steps.
+            No packages, no commitments.
+          </p>
+        </div>
+      </div>
+
+      <div class="steps">
+
+        <article class="step">
+          <div class="step__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </div>
+          <span class="step__num">STEP 01</span>
+          <h3>Find Your Mentor</h3>
+          <p>Search by strategy, instrument, or teaching style. Compare rates and availability in one place.</p>
+        </article>
+
+        <article class="step">
+          <div class="step__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+          </div>
+          <span class="step__num">STEP 02</span>
+          <h3>Book a Lesson</h3>
+          <p>Select a time that works and pay for a single session. No subscription, no future commitment.</p>
+        </article>
+
+        <article class="step">
+          <div class="step__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 8-6 4 6 4V8Z"/>
+              <rect x="2" y="6" width="14" height="12" rx="2"/>
+            </svg>
+          </div>
+          <span class="step__num">STEP 03</span>
+          <h3>Learn Live on Zoom</h3>
+          <p>A personalized 1:1 session tailored to your goals. PDF notes and materials provided afterward.</p>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ BECOME A MENTOR (LIGHT) ============ -->
+  <section class="become-mentor" id="become-mentor">
+    <div class="container">
+
+      <div class="mentor-banner">
+
+        <div class="mentor-banner__image">
+          <img src="assets/images/mentor-banner.jpg" alt="A trader mentoring a student">
+        </div>
+
+        <div class="mentor-banner__content">
+          <span class="eyebrow">For Mentors</span>
+          <h2>Teach what you know.<br>On your terms.</h2>
+          <p>
+            Share your knowledge with serious learners, set your own rates and schedule,
+            and get paid weekly through Skillme2.
+          </p>
+          <button class="btn">
+            Apply to Teach
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="mentor-banner__benefits">
+          <div class="benefit">
+            <span class="check" aria-hidden="true">✓</span>
+            <span>Set your own rate and schedule</span>
+          </div>
+          <div class="benefit">
+            <span class="check" aria-hidden="true">✓</span>
+            <span>Teach any strategy or method you use</span>
+          </div>
+          <div class="benefit">
+            <span class="check" aria-hidden="true">✓</span>
+            <span>Get paid weekly through Skillme2</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ TRUST STRIP (LIGHT) ============ -->
+  <section class="trust-strip">
+    <div class="container trust-strip__inner">
+
+      <div class="trust-item">
+        <span class="trust-item__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2137" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4Z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </span>
+        <h4>Verified trader-mentors</h4>
+        <p>Real traders. Proven experience.</p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2137" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <h4>Secure per-lesson payments</h4>
+        <p>Safe, simple, and reliable.</p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2137" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 8-6 4 6 4V8Z"/>
+            <rect x="2" y="6" width="14" height="12" rx="2"/>
+          </svg>
+        </span>
+        <h4>Live 1:1 on Zoom</h4>
+        <p>Interactive and personalized.</p>
+      </div>
+
+      <div class="trust-item">
+        <span class="trust-item__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2137" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </span>
+        <h4>Weekly mentor payouts</h4>
+        <p>Fast and consistent.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER (DARK) ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+
+      <div class="footer__brand">
+        <img src="assets/logo/skillme2-logo.svg" alt="Skillme2">
+        <p>Learn Trading. One Lesson at a Time.</p>
+        <div class="footer__social">
+          <a href="#" aria-label="X">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231ZM17.083 19.77h1.833L7.084 4.126H5.117Z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="YouTube">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12Z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05a3.75 3.75 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer__col">
+        <h5>Platform</h5>
+        <a href="#mentors">Browse Mentors</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#">Pricing</a>
+      </div>
+
+      <div class="footer__col">
+        <h5>Mentors</h5>
+        <a href="#become-mentor">Apply to Teach</a>
+        <a href="#">Guidelines</a>
+        <a href="#">Payouts</a>
+      </div>
+
+      <div class="footer__col">
+        <h5>Legal</h5>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Refunds</a>
+      </div>
+
+      <div class="footer__col">
+        <h5>Contact</h5>
+        <a href="mailto:support@skillme2.com">support@skillme2.com</a>
+        <p>© 2026 Skillme2.<br>All rights reserved.</p>
+      </div>
+
+    </div>
+  </footer>
+
+<script src="js/view-toggle.js"></script>
+<script src="js/modals.js"></script>
+  <script src="js/mentor-grid.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/view-toggle.js"></script>
+</body>
+</html>
