@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard — Skillme2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash">
+
+  <header class="dash-topbar">
+    <div class="container dash-topbar__inner">
+      <a href="index.html" class="dash-topbar__logo">
+        <img src="assets/logo/skillme2-logo.svg" alt="Skillme2">
+      </a>
+      <nav class="dash-topbar__nav">
+        <a href="index.html">Browse Mentors</a>
+        <a href="#" class="is-active">My Lessons</a>
+        <a href="#">Settings</a>
+      </nav>
+      <div class="dash-topbar__user">
+        <span class="dash-topbar__name" id="user-name">Student</span>
+        <button class="btn btn--ghost" id="logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <div class="container">
+
+      <div class="dash-header">
+        <div>
+          <span class="eyebrow">Student Dashboard</span>
+          <h1>Welcome back, <span id="first-name">Student</span>.</h1>
+          <p class="dash-header__sub">Here's what's happening with your lessons.</p>
+        </div>
+        <a href="index.html#mentors" class="btn btn--navy">Book a Lesson</a>
+      </div>
+
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-upcoming">0</span>
+          <span class="dash-stat__label">Upcoming Lessons</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-completed">0</span>
+          <span class="dash-stat__label">Lessons Completed</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-invested">$0</span>
+          <span class="dash-stat__label">Total Invested</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-mentors">0</span>
+          <span class="dash-stat__label">Mentors Worked With</span>
+        </div>
+      </div>
+
+      <section class="dash-section">
+        <h2 class="dash-section__title">Upcoming Lessons</h2>
+        <div class="dash-list" id="student-bookings">
+          <!-- Populated by js/dashboard.js -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/modals.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

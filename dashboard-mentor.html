@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentor Dashboard — Skillme2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dash">
+
+  <header class="dash-topbar">
+    <div class="container dash-topbar__inner">
+      <a href="index.html" class="dash-topbar__logo">
+        <img src="assets/logo/skillme2-logo.svg" alt="Skillme2">
+      </a>
+      <nav class="dash-topbar__nav">
+        <a href="index.html">Platform</a>
+        <a href="#" class="is-active">My Dashboard</a>
+        <a href="#">Schedule</a>
+        <a href="#">Earnings</a>
+      </nav>
+      <div class="dash-topbar__user">
+        <span class="dash-topbar__name" id="user-name">Mentor</span>
+        <button class="btn btn--ghost" id="logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <div class="container">
+
+      <div class="dash-header">
+        <div>
+          <span class="eyebrow">Mentor Dashboard</span>
+          <h1>Welcome, <span id="first-name">Mentor</span>.</h1>
+          <p class="dash-header__sub" id="mentor-status">Loading your status…</p>
+        </div>
+        <a href="#" class="btn btn--navy">Add Availability</a>
+      </div>
+
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="mentor-rate">$0</span>
+          <span class="dash-stat__label">Your Rate / Lesson</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-lessons-week">0</span>
+          <span class="dash-stat__label">Upcoming Lessons</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-pending-payout">$0</span>
+          <span class="dash-stat__label">Pending Payout</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat__value" id="stat-rating">—</span>
+          <span class="dash-stat__label">Rating</span>
+        </div>
+      </div>
+
+      <section class="dash-section">
+        <h2 class="dash-section__title">Your Profile</h2>
+        <div class="dash-card">
+          <div class="dash-card__row">
+            <span>Name</span>
+            <strong id="mentor-name">—</strong>
+          </div>
+          <div class="dash-card__row">
+            <span>Specialty</span>
+            <strong id="mentor-specialty">—</strong>
+          </div>
+          <div class="dash-card__row">
+            <span>Years trading</span>
+            <strong id="mentor-years">—</strong>
+          </div>
+          <div class="dash-card__row">
+            <span>Rate per lesson</span>
+            <strong id="mentor-rate-2">—</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="dash-section">
+        <h2 class="dash-section__title">Upcoming Lessons</h2>
+        <div class="dash-list" id="mentor-bookings">
+          <!-- Populated by js/dashboard.js -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/modals.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+/* ============================================
+   SKILLME2 — DASHBOARD STYLES
+   ============================================ */
+
+body.dash {
+  background: var(--navy-900);
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* ---------- Topbar ---------- */
+.dash-topbar {
+  background: var(--navy-950);
+  border-bottom: 1px solid var(--surface-line);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.dash-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  gap: 2rem;
+}
+
+.dash-topbar__logo img {
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.dash-topbar__nav {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.dash-topbar__nav a { transition: color 0.18s ease; }
+.dash-topbar__nav a:hover { color: #fff; }
+.dash-topbar__nav a.is-active { color: var(--gold); font-weight: 600; }
+
+.dash-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.dash-topbar__name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ---------- Main ---------- */
+.dash-main { padding: 3rem 0 6rem; }
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--surface-line);
+  flex-wrap: wrap;
+}
+
+.dash-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0.5rem 0;
+}
+
+.dash-header__sub {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* ---------- Stats ---------- */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.dash-stat {
+  padding: 1.5rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+}
+
+.dash-stat__value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  font-feature-settings: "tnum";
+}
+
+.dash-stat__label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
+/* ---------- Sections ---------- */
+.dash-section { margin-bottom: 3rem; }
+
+.dash-section__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.dash-list {
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-panel);
+}
+
+.dash-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--surface-line);
+  gap: 2rem;
+}
+.dash-row:last-child { border-bottom: none; }
+
+.dash-row__main strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+.dash-row__main span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dash-row__meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.dash-row__action {
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+.dash-row__action:hover { text-decoration: underline; }
+
+/* ---------- Card (mentor profile) ---------- */
+.dash-card {
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  background: var(--surface-panel);
+  overflow: hidden;
+}
+
+.dash-card__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--surface-line);
+  font-size: 0.9rem;
+}
+.dash-card__row:last-child { border-bottom: none; }
+.dash-card__row span { color: var(--text-muted); }
+.dash-card__row strong { color: #fff; font-weight: 600; }
+
+/* ---------- Empty ---------- */
+.dash-empty {
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 1px dashed var(--surface-line-strong);
+  border-radius: 10px;
+  color: var(--text-secondary);
+}
+.dash-empty p { margin-bottom: 1.25rem; font-size: 0.9rem; }
