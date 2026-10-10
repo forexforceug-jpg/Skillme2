@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings — Skillme2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/feed.css">
+  <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="feed">
+
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="topbar__menu" aria-label="Toggle sidebar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="topbar__logo">
+        <img src="../assets/logo/logo.png" alt="Skillme2">
+      </a>
+    </div>
+    <div class="topbar__center"></div>
+    <div class="topbar__right">
+      <button class="btn btn--navy" data-action="session">Sign In</button>
+    </div>
+  </header>
+
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">Settings</span>
+          <h1 class="page-title">Account Settings</h1>
+          <p class="page-desc">Manage your profile, preferences, and security.</p>
+        </div>
+      </div>
+
+      <div class="settings-layout">
+        <nav class="settings-nav">
+          <button class="settings-nav__item is-active" data-tab="profile">Profile</button>
+          <button class="settings-nav__item" data-tab="account">Account</button>
+          <button class="settings-nav__item" data-tab="notifications">Notifications</button>
+          <button class="settings-nav__item" data-tab="security">Security</button>
+          <button class="settings-nav__item" data-tab="danger">Danger Zone</button>
+        </nav>
+
+        <div class="settings-content">
+          <!-- Profile -->
+          <div class="settings-panel is-active" data-panel="profile">
+            <h2>Profile</h2>
+            <p class="settings-panel__desc">This is how others see you on Skillme2.</p>
+
+            <form class="settings-form" id="profile-form">
+              <div class="settings-avatar">
+                <img id="profile-avatar" src="https://i.pravatar.cc/120?u=you" alt="">
+                <button type="button" class="btn btn--ghost">Change Photo</button>
+              </div>
+
+              <label>
+                <span>Full Name</span>
+                <input type="text" name="name" id="profile-name" required>
+              </label>
+              <label>
+                <span>Email</span>
+                <input type="email" name="email" id="profile-email" disabled>
+              </label>
+
+              <div id="mentor-fields" hidden>
+                <label>
+                  <span>Specialty</span>
+                  <input type="text" name="specialty" id="profile-specialty">
+                </label>
+                <label>
+                  <span>Rate per lesson (USD)</span>
+                  <input type="number" name="rate" id="profile-rate" min="5">
+                </label>
+                <label>
+                  <span>Bio</span>
+                  <textarea name="bio" id="profile-bio" rows="4"></textarea>
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn--navy">Save Changes</button>
+            </form>
+          </div>
+
+          <!-- Account -->
+          <div class="settings-panel" data-panel="account">
+            <h2>Account</h2>
+            <p class="settings-panel__desc">Basic account information.</p>
+            <div class="settings-row">
+              <div>
+                <strong>Role</strong>
+                <span id="account-role">—</span>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <strong>Member since</strong>
+                <span id="account-created">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="settings-panel" data-panel="notifications">
+            <h2>Notifications</h2>
+            <p class="settings-panel__desc">Choose what you want to be notified about.</p>
+            <label class="toggle-row">
+              <input type="checkbox" checked>
+              <span>Lesson reminders</span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox" checked>
+              <span>New messages</span>
+            </label>
+            <label class="toggle-row">
+              <input type="checkbox">
+              <span>Marketing emails</span>
+            </label>
+          </div>
+
+          <!-- Security -->
+          <div class="settings-panel" data-panel="security">
+            <h2>Security</h2>
+            <p class="settings-panel__desc">Keep your account secure.</p>
+            <button class="btn btn--ghost">Change Password</button>
+            <button class="btn btn--ghost">Enable Two-Factor Auth</button>
+          </div>
+
+          <!-- Danger -->
+          <div class="settings-panel" data-panel="danger">
+            <h2>Danger Zone</h2>
+            <p class="settings-panel__desc">Irreversible actions. Proceed with caution.</p>
+            <button class="btn btn--danger" id="delete-account">Delete Account</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/sidebar-shared.js"></script>
+  <script src="../js/page-settings.js"></script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 // js/modals.js
-// Auth, signup, and session handling backed by Supabase.
-
 (function () {
   const db = window.Skillme2DB;
+  if (!db) {
+    console.error("Supabase client not ready when modals.js loaded.");
+  }
 
   // ---------- Modal root ----------
   const root = document.createElement("div");
@@ -22,19 +23,24 @@
 
   const body = root.querySelector(".modal__body");
 
-  // ---------- Session helpers (async, Supabase-backed) ----------
+  // ---------- Session helpers ----------
   async function getSession() {
     if (!db) return null;
-    const { data: { session } } = await db.auth.getSession();
-    if (!session) return null;
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (!session) return null;
 
-    const { data: profile } = await db
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
+      const { data: profile } = await db
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
 
-    return profile ? { ...profile, email: session.user.email } : null;
+      return profile ? { ...profile, email: session.user.email } : null;
+    } catch (err) {
+      console.error("getSession failed:", err);
+      return null;
+    }
   }
 
   async function signOut() {
@@ -45,7 +51,7 @@
 
   window.Skillme2Auth = { getSession, signOut };
 
-  // ---------- Toast notice ----------
+  // ---------- Toast ----------
   function notice(msg) {
     const el = document.createElement("div");
     el.className = "skillme2-notice";
@@ -59,7 +65,7 @@
   }
   window.Skillme2Notice = notice;
 
-  // ---------- Modal open / close ----------
+  // ---------- Modal control ----------
   function open(html) {
     body.innerHTML = html;
     root.classList.add("is-open");
@@ -82,7 +88,6 @@
     if (e.key === "Escape" && root.classList.contains("is-open")) close();
   });
 
-  // ---------- Error display inside modal ----------
   function showError(msg) {
     let el = body.querySelector(".modal__error");
     if (!el) {
@@ -98,18 +103,13 @@
     if (el) el.remove();
   }
 
-  // ============================================================
-  // AUTH MODAL
-  // mode: "signin" | "signup"
-  // preselectedRole: "student" | "mentor" | null
-  // ============================================================
+  // ---------- Auth ----------
   function openAuth(mode = "signup", preselectedRole = null) {
     if (mode === "signin") {
       open(renderSignIn());
       wireSignIn();
       return;
     }
-
     if (!preselectedRole) {
       open(renderRoleChoice());
       wireRoleChoice();
@@ -120,7 +120,6 @@
   }
   window.openAuth = openAuth;
 
-  // ---------- Sign In ----------
   function renderSignIn() {
     return `
       <div class="modal__header">
@@ -142,30 +141,25 @@
   function wireSignIn() {
     const form = document.getElementById("signin-form");
 
-    const switchLink = body.querySelector('[data-switch="signup"]');
-    if (switchLink) {
-      switchLink.addEventListener("click", e => {
-        e.preventDefault();
-        openAuth("signup");
-      });
-    }
+    body.querySelector('[data-switch="signup"]')?.addEventListener("click", e => {
+      e.preventDefault();
+      openAuth("signup");
+    });
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
       clearError();
-
       const btn = form.querySelector("[data-submit]");
       btn.disabled = true;
       btn.textContent = "Signing in…";
 
-      const email = form.email.value.trim();
-      const password = form.password.value;
-
       try {
-        const { data, error } = await db.auth.signInWithPassword({ email, password });
+        const { data, error } = await db.auth.signInWithPassword({
+          email: form.email.value.trim(),
+          password: form.password.value,
+        });
         if (error) throw error;
 
-        // Fetch profile for role
         const { data: profile } = await db
           .from("profiles")
           .select("*")
@@ -185,7 +179,6 @@
     });
   }
 
-  // ---------- Role Choice ----------
   function renderRoleChoice() {
     return `
       <div class="modal__header">
@@ -193,7 +186,6 @@
         <h2>Join Skillme2</h2>
         <p class="modal__sub">Choose how you want to use the platform.</p>
       </div>
-
       <div class="role-grid">
         <button type="button" class="role-card" data-role="student">
           <div class="role-card__icon">
@@ -205,7 +197,6 @@
           <h4>I'm a Student</h4>
           <p>Book 1:1 lessons with verified traders. Pay per lesson.</p>
         </button>
-
         <button type="button" class="role-card" data-role="mentor">
           <div class="role-card__icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -217,7 +208,6 @@
           <p>Teach what you know. Set your rate. Get paid weekly.</p>
         </button>
       </div>
-
       <p class="modal__foot">
         Already have an account? <a href="#" data-switch="signin">Sign in</a>
       </p>
@@ -228,17 +218,12 @@
     body.querySelectorAll("[data-role]").forEach(card => {
       card.addEventListener("click", () => openAuth("signup", card.dataset.role));
     });
-
-    const switchLink = body.querySelector('[data-switch="signin"]');
-    if (switchLink) {
-      switchLink.addEventListener("click", e => {
-        e.preventDefault();
-        openAuth("signin");
-      });
-    }
+    body.querySelector('[data-switch="signin"]')?.addEventListener("click", e => {
+      e.preventDefault();
+      openAuth("signin");
+    });
   }
 
-  // ---------- Sign Up Form ----------
   function renderSignUpForm(role) {
     const isMentor = role === "mentor";
     return `
@@ -251,12 +236,10 @@
             : "Create your free account. Pay only when you book a lesson."}
         </p>
       </div>
-
       <form class="modal__form" id="signup-form" novalidate>
         <label><span>Full name</span><input type="text" name="name" required autocomplete="name"></label>
         <label><span>Email</span><input type="email" name="email" required autocomplete="email"></label>
         <label><span>Password</span><input type="password" name="password" required minlength="6" autocomplete="new-password"></label>
-
         ${isMentor ? `
           <label><span>Primary specialty</span><input type="text" name="specialty" required placeholder="e.g. Price Action, SMC, Psychology"></label>
           <label><span>Years trading</span><input type="number" name="years" min="1" required></label>
@@ -274,12 +257,10 @@
             </select>
           </label>
         `}
-
         <button type="submit" class="btn btn--navy btn--block" data-submit>
           ${isMentor ? "Submit Application" : "Create Student Account"}
         </button>
       </form>
-
       <p class="modal__foot">
         <a href="#" data-back>← Choose a different role</a>
       </p>
@@ -288,18 +269,14 @@
 
   function wireSignUpForm(role) {
     const form = document.getElementById("signup-form");
-    const back = body.querySelector("[data-back]");
-    if (back) {
-      back.addEventListener("click", e => {
-        e.preventDefault();
-        openAuth("signup");
-      });
-    }
+    body.querySelector("[data-back]")?.addEventListener("click", e => {
+      e.preventDefault();
+      openAuth("signup");
+    });
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
       clearError();
-
       const btn = form.querySelector("[data-submit]");
       btn.disabled = true;
       btn.textContent = "Creating account…";
@@ -307,7 +284,6 @@
       const data = Object.fromEntries(new FormData(form).entries());
 
       try {
-        // 1. Sign up with Supabase Auth
         const { data: signUpData, error: signUpError } = await db.auth.signUp({
           email: data.email.trim(),
           password: data.password,
@@ -317,7 +293,6 @@
 
         const userId = signUpData.user.id;
 
-        // 2. Insert profile
         const profilePayload = {
           id: userId,
           name: data.name.trim(),
@@ -335,7 +310,6 @@
         const { error: profileError } = await db.from("profiles").insert(profilePayload);
         if (profileError) throw profileError;
 
-        // 3. If mentor, create a mentor listing
         if (role === "mentor") {
           const { error: mentorError } = await db.from("mentors").insert({
             profile_id: userId,
@@ -351,7 +325,6 @@
           if (mentorError) throw mentorError;
         }
 
-        // 4. Redirect to dashboard
         close();
         window.location.href = role === "mentor"
           ? "dashboard-mentor.html"
@@ -364,11 +337,8 @@
     });
   }
 
-  // ============================================================
-  // GLOBAL BUTTON HANDLERS
-  // ============================================================
+  // ---------- Global click handlers ----------
   document.addEventListener("click", async e => {
-    // Navbar session button
     const sessionBtn = e.target.closest('[data-action="session"]');
     if (sessionBtn) {
       e.preventDefault();
@@ -383,7 +353,6 @@
       return;
     }
 
-    // Apply to Teach
     const applyBtn = e.target.closest('[data-action="apply"]');
     if (applyBtn) {
       e.preventDefault();
