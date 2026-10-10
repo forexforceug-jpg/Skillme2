@@ -52,76 +52,95 @@
   </header>
 
   <!-- ============ LAYOUT ============ -->
-  <div class="app">
+  <div class="app" id="app">
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <nav class="sidebar__nav">
-        <a href="#" class="sidebar__item is-active">
+        <a href="index.html" class="sidebar__item is-active">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <path d="M9 22V12h6v10"/>
           </svg>
           <span>Home</span>
         </a>
-        <a href="#mentors" class="sidebar__item">
+
+        <a href="#inbox" class="sidebar__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="4"/>
-            <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <path d="m22 6-10 7L2 6"/>
           </svg>
-          <span>Browse Mentors</span>
+          <span>Inbox</span>
         </a>
-        <a href="#" class="sidebar__item">
+
+        <a href="#payments" class="sidebar__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <path d="M2 10h20"/>
+          </svg>
+          <span>Payments</span>
+        </a>
+
+        <!-- Mentors (collapsible — like YouTube subscriptions) -->
+        <div class="sidebar__group" data-group="mentors">
+          <button class="sidebar__group-toggle" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+            </svg>
+            <span>My Mentors</span>
+            <svg class="sidebar__group-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <div class="sidebar__group-list" id="my-mentors-list">
+            <!-- Populated by js/sidebar.js from enrolled mentors -->
+            <div class="sidebar__empty">No mentors yet. Book a lesson to add one.</div>
+          </div>
+        </div>
+
+        <a href="#articles" class="sidebar__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
           </svg>
-          <span>Articles & Blog</span>
+          <span>Articles</span>
         </a>
-        <a href="#" class="sidebar__item">
+
+        <a href="#classes" class="sidebar__item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+            <rect x="2" y="6" width="20" height="14" rx="2"/>
+            <path d="M2 10h20M8 6V2M16 6V2"/>
           </svg>
-          <span>Courses & PDFs</span>
-        </a>
-        <a href="#" class="sidebar__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m22 8-6 4 6 4V8Z"/>
-            <rect x="2" y="6" width="14" height="12" rx="2"/>
-          </svg>
-          <span>Live Debates</span>
-        </a>
-        <a href="#" class="sidebar__item">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-          <span>Markets</span>
+          <span>Classes</span>
         </a>
       </nav>
 
       <div class="sidebar__divider"></div>
 
       <nav class="sidebar__nav">
-        <a href="#" class="sidebar__item">
-          <span class="sidebar__emoji">📈</span>
-          <span>Forex</span>
+        <a href="#settings" class="sidebar__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Settings</span>
         </a>
-        <a href="#" class="sidebar__item">
-          <span class="sidebar__emoji">🪙</span>
-          <span>Crypto</span>
+
+        <a href="#terms" class="sidebar__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <path d="M14 2v6h6"/>
+          </svg>
+          <span>Terms of Service</span>
         </a>
-        <a href="#" class="sidebar__item">
-          <span class="sidebar__emoji">📊</span>
-          <span>Indices</span>
-        </a>
-        <a href="#" class="sidebar__item">
-          <span class="sidebar__emoji">🧠</span>
-          <span>Psychology</span>
-        </a>
-        <a href="#" class="sidebar__item">
-          <span class="sidebar__emoji">🎯</span>
-          <span>Risk</span>
+
+        <a href="#privacy" class="sidebar__item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Privacy Policy</span>
         </a>
       </nav>
     </aside>
@@ -129,17 +148,19 @@
     <!-- MAIN FEED -->
     <main class="main">
 
-      <!-- Filter chips -->
-      <div class="chips" role="group" aria-label="Content filters">
-        <button class="chip is-active" data-filter="all">All</button>
-        <button class="chip" data-filter="mentors">Mentors</button>
-        <button class="chip" data-filter="articles">Articles</button>
-        <button class="chip" data-filter="strategies">Strategies</button>
-        <button class="chip" data-filter="psychology">Psychology</button>
-        <button class="chip" data-filter="crypto">Crypto</button>
-        <button class="chip" data-filter="forex">Forex</button>
-        <button class="chip" data-filter="indices">Indices</button>
-        <button class="chip" data-filter="risk">Risk</button>
+      <!-- Sticky chips -->
+      <div class="chips-wrap">
+        <div class="chips" role="group" aria-label="Content filters">
+          <button class="chip is-active" data-filter="all">All</button>
+          <button class="chip" data-filter="mentors">Mentors</button>
+          <button class="chip" data-filter="articles">Articles</button>
+          <button class="chip" data-filter="strategies">Strategies</button>
+          <button class="chip" data-filter="psychology">Psychology</button>
+          <button class="chip" data-filter="crypto">Crypto</button>
+          <button class="chip" data-filter="forex">Forex</button>
+          <button class="chip" data-filter="indices">Indices</button>
+          <button class="chip" data-filter="risk">Risk</button>
+        </div>
       </div>
 
       <!-- Feed grid -->
@@ -162,8 +183,8 @@
       <div class="footer__col">
         <h5>Platform</h5>
         <a href="#mentors">Browse Mentors</a>
-        <a href="#">Articles</a>
-        <a href="#">Courses</a>
+        <a href="#articles">Articles</a>
+        <a href="#classes">Classes</a>
       </div>
 
       <div class="footer__col">
@@ -175,8 +196,8 @@
 
       <div class="footer__col">
         <h5>Legal</h5>
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
+        <a href="#terms">Terms</a>
+        <a href="#privacy">Privacy</a>
         <a href="#">Refunds</a>
       </div>
 
@@ -192,6 +213,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/feed.js"></script>
+  <script src="js/sidebar.js"></script>
   <script src="js/modals.js"></script>
 </body>
 </html>
