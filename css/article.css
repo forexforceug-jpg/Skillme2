@@ -1,0 +1,223 @@
+/* ============================================
+   SKILLME2 — ARTICLE READER
+   ============================================ */
+
+.article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0.5rem 0 4rem;
+}
+
+/* ---------- HEAD ---------- */
+.article__head {
+  margin-bottom: 2rem;
+}
+
+.article__title {
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.article__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.article__author-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--surface-line-strong);
+}
+.article__meta strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+}
+.article__meta span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ---------- COVER ---------- */
+.article__cover {
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+}
+.article__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- BODY ---------- */
+.article__body {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+.article__body p {
+  margin-bottom: 1.5rem;
+}
+.article__body strong { color: #fff; font-weight: 600; }
+.article__body em { color: #fff; }
+
+.article__body h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 2.5rem 0 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.article__body h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 2rem 0 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.article__body ul,
+.article__body ol {
+  margin: 1.25rem 0 1.75rem 1.5rem;
+  padding: 0;
+}
+.article__body li {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+  padding-left: 0.35rem;
+}
+.article__body ul li::marker,
+.article__body ol li::marker {
+  color: var(--gold);
+}
+
+.article__body blockquote {
+  border-left: 3px solid var(--gold);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.6;
+}
+
+.article__body a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article__body a:hover {
+  color: var(--gold-soft);
+}
+
+.article__body img {
+  border-radius: 10px;
+  margin: 1.75rem 0;
+  border: 1px solid var(--surface-line);
+}
+
+.article__body code {
+  background: var(--surface-panel);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--accent-mint);
+  font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+.article__body pre {
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  margin: 1.75rem 0;
+}
+.article__body pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.article__body hr {
+  border: none;
+  border-top: 1px solid var(--surface-line);
+  margin: 2.5rem 0;
+}
+
+/* ---------- ACTIONS ---------- */
+.article__actions {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--surface-line);
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.skeleton-wrap:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--surface-panel) 25%,
+    var(--surface-panel-hover) 50%,
+    var(--surface-panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 10px;
+}
+.skeleton--hero { height: 300px; }
+.skeleton--line { height: 16px; }
+.skeleton--line:nth-child(3) { width: 60%; }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---------- PRINT / PDF ---------- */
+@media print {
+  body.feed { background: #fff; color: #111; }
+  .topbar, .sidebar, .article__actions, .back-btn { display: none !important; }
+  .app, .main { display: block; padding: 0; margin: 0; }
+  .article { max-width: 100%; padding: 0; }
+  .article__title, .article__body h2, .article__body h3 { color: #111; }
+  .article__body, .article__body p, .article__body li { color: #333; }
+  .article__body blockquote {
+    color: #111;
+    border-left-color: #999;
+  }
+  .article__cover { border: none; }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .article { padding-bottom: 3rem; }
+  .article__cover { margin-bottom: 1.75rem; border-radius: 10px; }
+  .article__body { font-size: 1rem; }
+  .article__body li { font-size: 1rem; }
+  .article__body blockquote {
+    font-size: 1.05rem;
+    padding-left: 1.15rem;
+  }
+}
+/* In css/reset.css — add at the bottom */
+[hidden] {
+  display: none !important;
+}
