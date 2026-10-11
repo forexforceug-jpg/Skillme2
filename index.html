@@ -45,9 +45,8 @@
       </div>
     </div>
 
-    <div class="topbar__right">
-      <button class="btn btn--ghost" data-action="apply">Teach</button>
-      <button class="btn btn--navy" data-action="session">Sign In</button>
+    <div class="topbar__right" data-user-slot>
+      <!-- Rendered by modals.js -->
     </div>
   </header>
 
@@ -55,7 +54,7 @@
   <div class="app" id="app">
 
     <aside class="sidebar" id="sidebar"></aside>
-    <!-- ============ MAIN FEED ============ -->
+
     <main class="main">
 
       <div class="chips-wrap">
@@ -72,9 +71,7 @@
         </div>
       </div>
 
-      <div class="feed-grid" id="feed-grid">
-        <!-- Populated by js/feed.js -->
-      </div>
+      <div class="feed-grid" id="feed-grid"></div>
 
     </main>
 
@@ -84,14 +81,14 @@
   <footer class="footer footer--slim">
     <div class="container footer__inner">
       <div class="footer__brand">
-        <img src="assets/logo/skillme2-logo.svg" alt="Skillme2">
+        <img src="assets/logo/logo.png" alt="Skillme2">
         <p>Learn financial markets from real traders.</p>
       </div>
 
       <div class="footer__col">
         <h5>Platform</h5>
         <a href="index.html">Browse Mentors</a>
-        <a href="pages/classes.html">Classes</a>
+        <a href="pages/dashboard-student.html">Classes</a>
         <a href="pages/payments.html">Payments</a>
       </div>
 
@@ -120,83 +117,8 @@
   <!-- ============ SCRIPTS ============ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
-  <script src="js/feed.js"></script>
   <script src="js/modals.js"></script>
+  <script src="js/feed.js"></script>
   <script src="js/sidebar-shared.js"></script>
-  <script>
-    // Handle "My Mentors" collapsible group + load enrolled mentors on the homepage.
-    (async function () {
-      const group = document.querySelector('.sidebar__group[data-group="mentors"]');
-      const toggle = group?.querySelector(".sidebar__group-toggle");
-      if (group && toggle) {
-        toggle.addEventListener("click", () => {
-          const isOpen = group.dataset.open === "true";
-          group.dataset.open = isOpen ? "false" : "true";
-          toggle.setAttribute("aria-expanded", String(!isOpen));
-        });
-      }
-
-      const list = document.getElementById("my-mentors-list");
-      if (!list) return;
-
-      const db = window.Skillme2DB;
-      if (!db) return;
-
-      const session = await window.Skillme2Auth.getSession();
-      if (!session || session.role !== "student") {
-        list.innerHTML = `<div class="sidebar__empty">Sign in as a student.</div>`;
-        return;
-      }
-
-      const { data } = await db
-        .from("bookings")
-        .select(`mentor_id, mentors (id, name, photo)`)
-        .eq("student_id", session.id);
-
-      if (!data || !data.length) {
-        list.innerHTML = `<div class="sidebar__empty">No mentors yet.</div>`;
-        return;
-      }
-
-      const seen = new Set();
-      const unique = data
-        .map(b => b.mentors)
-        .filter(m => m && !seen.has(m.id) && seen.add(m.id));
-
-      if (!unique.length) {
-        list.innerHTML = `<div class="sidebar__empty">No mentors yet.</div>`;
-        return;
-      }
-
-      list.innerHTML = unique.map(m => `
-        <a href="dashboard-student.html?mentor=${m.id}" class="sidebar__mentor-item">
-          <img class="sidebar__mentor-avatar" src="${m.photo || `https://i.pravatar.cc/100?u=${m.id}`}" alt="">
-          <span>${m.name}</span>
-        </a>
-      `).join("");
-    })();
-
-    // Sidebar toggle (desktop collapse, mobile slide-in)
-    (function () {
-      const menuBtn = document.querySelector(".topbar__menu");
-      const app = document.getElementById("app");
-      if (!menuBtn || !app) return;
-
-      menuBtn.addEventListener("click", () => {
-        const isMobile = window.matchMedia("(max-width: 1024px)").matches;
-        if (isMobile) {
-          app.classList.toggle("is-sidebar-open");
-        } else {
-          app.classList.toggle("is-sidebar-hidden");
-        }
-      });
-
-      app.addEventListener("click", e => {
-        if (e.target === app && app.classList.contains("is-sidebar-open")) {
-          app.classList.remove("is-sidebar-open");
-        }
-      });
-    })();
-  </script>
 </body>
 </html>

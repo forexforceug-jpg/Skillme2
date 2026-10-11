@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentor Profile â€” Skillme2</title>
+  <meta name="description" content="View a trader-mentor's profile, specialties, availability, and reviews.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/feed.css">
+  <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="feed">
+
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="topbar__menu" aria-label="Toggle sidebar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="topbar__logo">
+        <img src="../assets/logo/logo.png" alt="Skillme2">
+      </a>
+    </div>
+    <div class="topbar__center"></div>
+    <div class="topbar__right">
+      <button class="btn btn--navy" data-action="session">Sign In</button>
+    </div>
+  </header>
+
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+
+      <!-- Back arrow -->
+      <button class="back-btn" id="back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back
+      </button>
+
+      <!-- Loading skeleton -->
+      <div id="mentor-loading" class="skeleton-wrap">
+        <div class="skeleton skeleton--hero"></div>
+        <div class="skeleton skeleton--line"></div>
+        <div class="skeleton skeleton--line"></div>
+      </div>
+
+      <!-- Mentor content -->
+      <article id="mentor-content" hidden>
+
+        <!-- Header -->
+        <div class="mentor-profile__hero">
+          <img class="mentor-profile__photo" id="mentor-photo" src="" alt="">
+          <div class="mentor-profile__intro">
+            <div class="mentor-profile__badges" id="mentor-badges"></div>
+            <h1 class="mentor-profile__name" id="mentor-name"></h1>
+            <p class="mentor-profile__specialty" id="mentor-specialty"></p>
+
+            <div class="mentor-profile__stats">
+              <div class="mentor-stat">
+                <span class="mentor-stat__value" id="mentor-rating">â€”</span>
+                <span class="mentor-stat__label">Rating</span>
+              </div>
+              <div class="mentor-stat">
+                <span class="mentor-stat__value" id="mentor-reviews">0</span>
+                <span class="mentor-stat__label">Reviews</span>
+              </div>
+              <div class="mentor-stat">
+                <span class="mentor-stat__value" id="mentor-lessons">0</span>
+                <span class="mentor-stat__label">Lessons</span>
+              </div>
+              <div class="mentor-stat">
+                <span class="mentor-stat__value" id="mentor-experience">â€”</span>
+                <span class="mentor-stat__label">Experience</span>
+              </div>
+            </div>
+
+            <div class="mentor-profile__actions">
+              <button class="btn btn--navy" id="mentor-book-btn">
+                Book a Lesson Â· <span id="mentor-price">$0</span>
+              </button>
+              <button class="btn btn--ghost" id="mentor-message-btn">
+                Message
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <section class="mentor-profile__section">
+          <h2>About</h2>
+          <p id="mentor-bio">No bio provided yet.</p>
+        </section>
+
+        <!-- Tags -->
+        <section class="mentor-profile__section" id="mentor-tags-section">
+          <h2>Specialties</h2>
+          <div class="mentor-profile__tags" id="mentor-tags"></div>
+        </section>
+
+        <!-- Quote -->
+        <section class="mentor-profile__section" id="mentor-quote-section">
+          <blockquote class="mentor-profile__quote" id="mentor-quote"></blockquote>
+        </section>
+
+        <!-- Availability -->
+        <section class="mentor-profile__section">
+          <h2>Availability</h2>
+          <div class="mentor-profile__availability" id="mentor-availability">
+            <p class="mentor-profile__empty">No availability set.</p>
+          </div>
+        </section>
+
+        <!-- Reviews -->
+        <section class="mentor-profile__section">
+          <h2>Reviews</h2>
+          <div id="mentor-reviews-list">
+            <p class="mentor-profile__empty">No reviews yet.</p>
+          </div>
+        </section>
+
+      </article>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/sidebar-shared.js"></script>
+  <script src="../js/page-mentor.js"></script>
+</body>
+</html>

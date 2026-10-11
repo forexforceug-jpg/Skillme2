@@ -1,9 +1,7 @@
 // js/modals.js
 (function () {
   const db = window.Skillme2DB;
-  if (!db) {
-    console.error("Supabase client not ready when modals.js loaded.");
-  }
+  if (!db) console.error("Supabase client not ready when modals.js loaded.");
 
   // ---------- Modal root ----------
   const root = document.createElement("div");
@@ -46,7 +44,7 @@
   async function signOut() {
     if (!db) return;
     await db.auth.signOut();
-    window.location.href = "index.html";
+    window.location.href = window.location.pathname.includes("/pages/") ? "../index.html" : "index.html";
   }
 
   window.Skillme2Auth = { getSession, signOut };
@@ -72,18 +70,15 @@
     document.body.style.overflow = "hidden";
     wireClose();
   }
-
   function close() {
     root.classList.remove("is-open");
     document.body.style.overflow = "";
   }
-
   function wireClose() {
     root.querySelectorAll("[data-close]").forEach(el =>
       el.addEventListener("click", close)
     );
   }
-
   document.addEventListener("keydown", e => {
     if (e.key === "Escape" && root.classList.contains("is-open")) close();
   });
@@ -97,13 +92,15 @@
     }
     el.textContent = msg;
   }
-
   function clearError() {
     const el = body.querySelector(".modal__error");
     if (el) el.remove();
   }
 
-  // ---------- Auth ----------
+  // ============================================================
+  // AUTH MODAL
+  // mode: "signin" | "signup"
+  // ============================================================
   function openAuth(mode = "signup", preselectedRole = null) {
     if (mode === "signin") {
       open(renderSignIn());
@@ -120,6 +117,7 @@
   }
   window.openAuth = openAuth;
 
+  // ---------- Sign In ----------
   function renderSignIn() {
     return `
       <div class="modal__header">
@@ -168,9 +166,12 @@
 
         const role = profile?.role || "student";
         close();
-        window.location.href = role === "mentor"
-          ? "dashboard-mentor.html"
-          : "dashboard-student.html";
+
+        const inPages = window.location.pathname.includes("/pages/");
+        const path = role === "mentor"
+          ? (inPages ? "dashboard-mentor.html" : "pages/dashboard-mentor.html")
+          : (inPages ? "dashboard-student.html" : "pages/dashboard-student.html");
+        window.location.href = path;
       } catch (err) {
         showError(err.message || "Could not sign in.");
         btn.disabled = false;
@@ -179,6 +180,7 @@
     });
   }
 
+  // ---------- Role Choice ----------
   function renderRoleChoice() {
     return `
       <div class="modal__header">
@@ -224,6 +226,7 @@
     });
   }
 
+  // ---------- Sign Up ----------
   function renderSignUpForm(role) {
     const isMentor = role === "mentor";
     return `
@@ -269,6 +272,7 @@
 
   function wireSignUpForm(role) {
     const form = document.getElementById("signup-form");
+
     body.querySelector("[data-back]")?.addEventListener("click", e => {
       e.preventDefault();
       openAuth("signup");
@@ -287,48 +291,59 @@
         const { data: signUpData, error: signUpError } = await db.auth.signUp({
           email: data.email.trim(),
           password: data.password,
+          options: {
+            data: {
+              name: data.name.trim(),
+              role,
+            },
+          },
         });
         if (signUpError) throw signUpError;
         if (!signUpData.user) throw new Error("Signup failed — no user returned.");
 
         const userId = signUpData.user.id;
+        await new Promise(r => setTimeout(r, 500));
 
-        const profilePayload = {
-          id: userId,
-          name: data.name.trim(),
-          email: data.email.trim(),
-          role,
-          ...(role === "mentor"
-            ? {
-                specialty: data.specialty.trim(),
-                years: parseInt(data.years, 10),
-                rate: parseFloat(data.rate),
-              }
-            : { interest: data.interest }),
-        };
-
-        const { error: profileError } = await db.from("profiles").insert(profilePayload);
-        if (profileError) throw profileError;
+        if (role === "student") {
+          await db.from("profiles").update({ interest: data.interest }).eq("id", userId);
+        }
 
         if (role === "mentor") {
-          const { error: mentorError } = await db.from("mentors").insert({
+          const { error: mentorError } = await db.from("mentor_profiles").insert({
             profile_id: userId,
-            name: data.name.trim(),
             specialty: data.specialty.trim(),
-            experience: `${data.years} years`,
-            price: parseFloat(data.rate),
+            experience_years: parseInt(data.years, 10),
+            rate: parseFloat(data.rate),
             verified: false,
             rating: 0,
-            reviews: 0,
-            tags: [],
+            review_count: 0,
+            lesson_count: 0,
           });
           if (mentorError) throw mentorError;
         }
 
+        // Ensure we have a session
+        const { data: { session } } = await db.auth.getSession();
+        if (!session) {
+          const { error: signInError } = await db.auth.signInWithPassword({
+            email: data.email.trim(),
+            password: data.password,
+          });
+          if (signInError) {
+            showError("Account created. Check your email to confirm before signing in.");
+            btn.disabled = false;
+            btn.textContent = role === "mentor" ? "Submit Application" : "Create Student Account";
+            return;
+          }
+        }
+
         close();
-        window.location.href = role === "mentor"
-          ? "dashboard-mentor.html"
-          : "dashboard-student.html";
+
+        const inPages = window.location.pathname.includes("/pages/");
+        const dest = role === "mentor"
+          ? (inPages ? "dashboard-mentor.html" : "pages/dashboard-mentor.html")
+          : (inPages ? "dashboard-student.html" : "pages/dashboard-student.html");
+        window.location.href = dest;
       } catch (err) {
         showError(err.message || "Could not create account.");
         btn.disabled = false;
@@ -337,19 +352,132 @@
     });
   }
 
-  // ---------- Global click handlers ----------
-  document.addEventListener("click", async e => {
-    const sessionBtn = e.target.closest('[data-action="session"]');
-    if (sessionBtn) {
-      e.preventDefault();
-      const session = await getSession();
-      if (session) {
-        window.location.href = session.role === "mentor"
-          ? "dashboard-mentor.html"
-          : "dashboard-student.html";
+  // ============================================================
+  // PROFILE DROPDOWN MENU
+  // ============================================================
+  let dropdownEl = null;
+
+  function closeDropdown() {
+    if (dropdownEl) {
+      dropdownEl.remove();
+      dropdownEl = null;
+    }
+  }
+
+  document.addEventListener("click", e => {
+    if (dropdownEl && !dropdownEl.contains(e.target) && !e.target.closest("[data-avatar-trigger]")) {
+      closeDropdown();
+    }
+  });
+
+  function openDropdown(anchor, session) {
+    closeDropdown();
+
+    const inPages = window.location.pathname.includes("/pages/");
+    const p = inPages ? "" : "pages/";
+
+    const el = document.createElement("div");
+    el.className = "profile-dropdown";
+    el.innerHTML = `
+      <div class="profile-dropdown__head">
+        <img class="profile-dropdown__avatar" src="${session.avatar_url || `https://i.pravatar.cc/100?u=${session.id}`}" alt="">
+        <div>
+          <div class="profile-dropdown__name">${session.name || "User"}</div>
+          <div class="profile-dropdown__email">${session.email || ""}</div>
+        </div>
+      </div>
+      <div class="profile-dropdown__divider"></div>
+      <a href="${p}settings.html" class="profile-dropdown__item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+      <a href="${p}dashboard-${session.role === "mentor" ? "mentor" : "student"}.html" class="profile-dropdown__item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M8 6V2M16 6V2"/></svg>
+        My Classes
+      </a>
+      <button type="button" class="profile-dropdown__item" id="switch-account-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Switch Account
+      </button>
+      <div class="profile-dropdown__divider"></div>
+      <button type="button" class="profile-dropdown__item profile-dropdown__item--danger" id="signout-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        Sign Out
+      </button>
+    `;
+
+    document.body.appendChild(el);
+    dropdownEl = el;
+
+    const rect = anchor.getBoundingClientRect();
+    el.style.top = `${rect.bottom + window.scrollY + 8}px`;
+    el.style.right = `${window.innerWidth - rect.right}px`;
+
+    el.querySelector("#signout-btn").addEventListener("click", () => {
+      closeDropdown();
+      signOut();
+    });
+
+    el.querySelector("#switch-account-btn").addEventListener("click", () => {
+      closeDropdown();
+      signOut();
+    });
+  }
+
+  // ============================================================
+  // TOPBAR AVATAR RENDERING
+  // ============================================================
+  async function renderTopbarUser() {
+    const slot = document.querySelector('[data-user-slot]');
+    if (!slot) return;
+
+    const session = await getSession();
+
+    if (!session) {
+      slot.innerHTML = `
+        <button class="btn btn--ghost" data-action="signin">Sign In</button>
+        <button class="btn btn--navy" data-action="signup">Register</button>
+      `;
+      return;
+    }
+
+    slot.innerHTML = `
+      <button class="profile-avatar-btn" data-avatar-trigger aria-label="Account menu">
+        <img
+          class="profile-avatar-btn__img"
+          src="${session.avatar_url || `https://i.pravatar.cc/100?u=${session.id}`}"
+          alt=""
+        >
+      </button>
+    `;
+
+    slot.querySelector("[data-avatar-trigger]").addEventListener("click", e => {
+      e.stopPropagation();
+      if (dropdownEl) {
+        closeDropdown();
       } else {
-        openAuth("signup");
+        openDropdown(e.currentTarget, session);
       }
+    });
+  }
+
+  window.Skillme2RenderTopbarUser = renderTopbarUser;
+
+  // ============================================================
+  // GLOBAL CLICK HANDLERS
+  // ============================================================
+  document.addEventListener("click", async e => {
+    const signInBtn = e.target.closest('[data-action="signin"]');
+    if (signInBtn) {
+      e.preventDefault();
+      openAuth("signin");
+      return;
+    }
+
+    const signUpBtn = e.target.closest('[data-action="signup"]');
+    if (signUpBtn) {
+      e.preventDefault();
+      openAuth("signup");
       return;
     }
 
@@ -359,5 +487,24 @@
       openAuth("signup", "mentor");
       return;
     }
+
+    const sessionBtn = e.target.closest('[data-action="session"]');
+    if (sessionBtn) {
+      e.preventDefault();
+      const session = await getSession();
+      if (session) {
+        const inPages = window.location.pathname.includes("/pages/");
+        window.location.href = session.role === "mentor"
+          ? (inPages ? "dashboard-mentor.html" : "pages/dashboard-mentor.html")
+          : (inPages ? "dashboard-student.html" : "pages/dashboard-student.html");
+      } else {
+        openAuth("signup");
+      }
+      return;
+    }
   });
+
+  // Auto-render topbar user if slot exists
+  document.addEventListener("DOMContentLoaded", renderTopbarUser);
+  if (document.readyState !== "loading") renderTopbarUser();
 })();

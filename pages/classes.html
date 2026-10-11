@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -28,9 +28,7 @@
       </a>
     </div>
     <div class="topbar__center"></div>
-    <div class="topbar__right">
-      <button class="btn btn--navy" data-action="session">Sign In</button>
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
   <div class="app" id="app">
@@ -43,27 +41,20 @@
           <h1 class="page-title" id="classes-title">Classes</h1>
           <p class="page-desc" id="classes-desc">Loading…</p>
         </div>
-        <a href="../index.html#feed" class="btn btn--navy" id="classes-cta" hidden>Book a Lesson</a>
+        <a href="../index.html" class="btn btn--navy" id="classes-cta" hidden>Book a Lesson</a>
       </div>
 
-      <!-- Upcoming -->
       <section class="page-section">
         <h2 class="table-title">Upcoming</h2>
         <div class="class-list" id="upcoming-list"></div>
       </section>
 
-      <!-- Completed -->
       <section class="page-section">
         <h2 class="table-title">Completed</h2>
         <div class="class-list" id="completed-list"></div>
       </section>
     </main>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-client.js"></script>
-  <script src="../js/sidebar-shared.js"></script>
-  <script src="js/sidebar-shared.js"></script>
-  <script src="../js/page-classes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>

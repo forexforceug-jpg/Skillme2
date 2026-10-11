@@ -1,83 +1,97 @@
 // js/feed.js
-// Renders the feed with distinct card types: mentor, article, sponsored.
-
 let allMentors = [];
+let allArticles = [];
+const sponsored = [];
 let activeFilter = "all";
-
-// ---------- Hardcoded content (until Supabase tables exist) ----------
-const articles = [
-  {
-    id: "a1",
-    type: "article",
-    title: "Why Most Retail Traders Lose: The Psychology of Early Exits",
-    excerpt: "Fear of losing a small gain is the same emotion that causes traders to cut winners and let losers run. Here's how to rewire that response.",
-    cover: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=70",
-    author: "Aisha B.",
-    date: "2 days ago",
-    readTime: "6 min read",
-    category: "psychology",
-  },
-  {
-    id: "a2",
-    type: "article",
-    title: "Risk Management: The Only Edge That Compounds",
-    excerpt: "Win rate is vanity. Expectancy is sanity. A deep look at how position sizing decisions determine long-term survival.",
-    cover: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=70",
-    author: "Daniel K.",
-    date: "5 days ago",
-    readTime: "8 min read",
-    category: "risk",
-  },
-  {
-    id: "a3",
-    type: "article",
-    title: "Reading Market Structure Before You Enter",
-    excerpt: "Higher highs, lower lows, and the pullbacks in between. Why structure matters more than any indicator on your chart.",
-    cover: "https://images.unsplash.com/photo-1543286386-713bdd548da4?w=800&q=70",
-    author: "Sarah M.",
-    date: "1 week ago",
-    readTime: "5 min read",
-    category: "strategies",
-  },
-  {
-    id: "a4",
-    type: "article",
-    title: "Bitcoin Halving Cycles: What History Actually Shows",
-    excerpt: "Four cycles is a small sample. But the patterns in the months surrounding halvings are consistent enough to study carefully.",
-    cover: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800&q=70",
-    author: "Brian O.",
-    date: "3 days ago",
-    readTime: "7 min read",
-    category: "crypto",
-  },
-];
-
-const sponsored = [
-  {
-    id: "s1",
-    type: "sponsored",
-    title: "Open a Demo Account with Exness — Zero Risk Practice",
-    excerpt: "Practice live market execution with a funded demo account. No deposit required. Built for beginners and experienced traders alike.",
-    cover: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=800&q=70",
-    partner: "Exness",
-    cta: "Open Demo Account",
-    category: "forex",
-  },
-];
 
 // ---------- Fetch mentors ----------
 async function loadMentors() {
   const db = window.Skillme2DB;
   if (!db) return [];
+
   const { data, error } = await db
-    .from("mentors")
-    .select("*")
+    .from("mentor_profiles")
+    .select(`
+      profile_id,
+      specialty,
+      experience_years,
+      rate,
+      tags,
+      quote,
+      verification,
+      rating,
+      review_count,
+      lesson_count,
+      profiles (name, avatar_url, bio)
+    `)
+    .eq("verification", "verified")
     .order("rating", { ascending: false });
+
   if (error) {
     console.error("Mentors fetch failed:", error.message);
     return [];
   }
-  return (data || []).map(m => ({ ...m, type: "mentor" }));
+
+  return (data || []).map(m => ({
+    id: m.profile_id,
+    type: "mentor",
+    name: m.profiles?.name || "Mentor",
+    photo: m.profiles?.avatar_url,
+    specialty: m.specialty,
+    experience: m.experience_years ? `${m.experience_years} years` : "",
+    tags: m.tags || [],
+    quote: m.quote,
+    price: Number(m.rate || 0),
+    rating: Number(m.rating || 0),
+    reviews: m.review_count || 0,
+    verified: m.verification === "verified",
+    availability: "Check availability",
+  }));
+}
+
+// ---------- Fetch articles ----------
+async function loadArticles() {
+  const db = window.Skillme2DB;
+  if (!db) return [];
+
+  const { data, error } = await db
+    .from("articles")
+    .select(`
+      id, slug, title, excerpt, cover_url, category, read_time_minutes, published_at,
+      profiles (name, avatar_url)
+    `)
+    .eq("published", true)
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error("Articles fetch failed:", error.message);
+    return [];
+  }
+
+  return (data || []).map(a => ({
+    id: a.slug || a.id,
+    slug: a.slug || a.id,
+    type: "article",
+    title: a.title,
+    excerpt: a.excerpt,
+    cover: a.cover_url,
+    author: a.profiles?.name || "Skillme2",
+    authorAvatar: a.profiles?.avatar_url,
+    date: a.published_at ? relativeTime(a.published_at) : "",
+    readTime: `${a.read_time_minutes || 5} min read`,
+    category: (a.category || "").toLowerCase(),
+  }));
+}
+
+function relativeTime(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString();
 }
 
 // ---------- Render dispatch ----------
@@ -86,11 +100,7 @@ function renderFeed(items) {
   if (!grid) return;
 
   if (!items.length) {
-    grid.innerHTML = `
-      <div class="feed-empty">
-        <p>Nothing matches this filter yet. Try another category.</p>
-      </div>
-    `;
+    grid.innerHTML = `<div class="feed-empty"><p>Nothing matches this filter yet.</p></div>`;
     return;
   }
 
@@ -100,8 +110,6 @@ function renderFeed(items) {
     if (item.type === "sponsored") return renderSponsoredCard(item);
     return "";
   }).join("");
-
-  wireClicks();
 }
 
 // ---------- Mentor card ----------
@@ -114,7 +122,8 @@ function renderMentorCard(m) {
   return `
     <article class="feed-card" data-mentor="${m.id}">
       <div class="feed-card__media">
-        <img src="${photo}" alt="${m.name}" loading="lazy">
+        <img src="${photo}" alt="${m.name}" loading="lazy"
+             onerror="this.src='https://i.pravatar.cc/400?u=${m.id}'">
         ${m.verified ? `<span class="feed-card__badge">Verified Trader</span>` : ""}
         <span class="feed-card__price">$${price} / lesson</span>
       </div>
@@ -123,24 +132,19 @@ function renderMentorCard(m) {
           <img class="feed-card__avatar" src="${photo}" alt="">
           <div>
             <div class="feed-card__author">${m.name}</div>
-            <div class="feed-card__author-sub">${m.experience || "Trader"} · ${m.specialty || "Markets"}</div>
+            <div class="feed-card__author-sub">${m.experience} · ${m.specialty}</div>
           </div>
         </div>
-
         ${m.quote ? `<p class="feed-card__excerpt">"${m.quote}"</p>` : ""}
-
         ${tags.length ? `
           <div class="feed-card__tags">
             ${tags.map(t => `<span class="feed-card__tag">${t}</span>`).join("")}
           </div>
         ` : ""}
-
         <div class="feed-card__meta">
           <span class="feed-card__rating">★ ${rating}</span>
-          <span>${m.reviews || 0} reviews</span>
-          <span>${m.availability || "Available"}</span>
+          <span>${m.reviews} reviews</span>
         </div>
-
         <div class="feed-card__actions">
           <button class="btn btn--navy btn--block" data-book="${m.id}">
             Book Now
@@ -157,21 +161,19 @@ function renderMentorCard(m) {
 // ---------- Article card ----------
 function renderArticleCard(a) {
   return `
-    <article class="feed-card" data-article="${a.id}">
+    <article class="feed-card" data-article="${a.slug}">
       <div class="feed-card__media">
         <img src="${a.cover}" alt="${a.title}" loading="lazy">
         <span class="feed-card__badge feed-card__badge--article">Article</span>
       </div>
       <div class="feed-card__body">
         <h3 class="feed-card__title">${a.title}</h3>
-        <p class="feed-card__excerpt">${a.excerpt}</p>
-
+        <p class="feed-card__excerpt">${a.excerpt || ""}</p>
         <div class="feed-card__meta">
           <span>${a.author}</span>
           <span>${a.date}</span>
           <span>${a.readTime}</span>
         </div>
-
         <div class="feed-card__actions">
           <button class="btn btn--ghost btn--block">
             Read More
@@ -196,61 +198,72 @@ function renderSponsoredCard(s) {
       <div class="feed-card__body">
         <h3 class="feed-card__title">${s.title}</h3>
         <p class="feed-card__excerpt">${s.excerpt}</p>
-
-        <div class="feed-card__meta">
-          <span>Partner offer</span>
-        </div>
-
         <div class="feed-card__actions">
-          <button class="btn btn--mint btn--block">
-            ${s.cta}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M7 17 17 7M7 7h10v10"/>
-            </svg>
-          </button>
+          <button class="btn btn--mint btn--block">${s.cta}</button>
         </div>
       </div>
     </article>
   `;
 }
 
-// ---------- Click wiring ----------
-function wireClicks() {
-  document.querySelectorAll("[data-book]").forEach(btn => {
-    btn.addEventListener("click", async e => {
+// ---------- Event delegation (wired once) ----------
+function wireFeedGrid() {
+  const grid = document.getElementById("feed-grid");
+  if (!grid || grid.dataset.wired === "true") return;
+  grid.dataset.wired = "true";
+
+  grid.addEventListener("click", async (e) => {
+    // Book Now — must be checked first, since it sits inside the mentor card
+    const bookBtn = e.target.closest("[data-book]");
+    if (bookBtn) {
+      e.preventDefault();
       e.stopPropagation();
-      const mentorId = btn.dataset.book;
+
+      const mentorId = bookBtn.dataset.book;
       const session = await window.Skillme2Auth.getSession();
       if (!session) return window.openAuth("signup", "student");
       if (session.role === "student") {
-        window.location.href = `dashboard-student.html?mentor=${mentorId}`;
+        window.location.href = `pages/dashboard-student.html?mentor=${mentorId}`;
       } else {
         window.Skillme2Notice("Sign in with a student account to book lessons.");
       }
-    });
-  });
+      return;
+    }
 
-  document.querySelectorAll("[data-article]").forEach(card => {
-    card.addEventListener("click", () => {
-      window.Skillme2Notice("Article reading page coming soon.");
-    });
-  });
+    // Mentor card — anywhere else in the card
+    const mentorCard = e.target.closest("[data-mentor]");
+    if (mentorCard) {
+      e.preventDefault();
+      window.location.href = `pages/mentor.html?id=${mentorCard.dataset.mentor}`;
+      return;
+    }
 
-  document.querySelectorAll("[data-sponsored]").forEach(card => {
-    card.addEventListener("click", () => {
+    // Article card
+    const articleCard = e.target.closest("[data-article]");
+    if (articleCard) {
+      e.preventDefault();
+      window.location.href = `pages/article.html?slug=${articleCard.dataset.article}`;
+      return;
+    }
+
+    // Sponsored card
+    const sponsoredCard = e.target.closest("[data-sponsored]");
+    if (sponsoredCard) {
+      e.preventDefault();
       window.Skillme2Notice("Partner link will open in a new tab.");
-    });
+      return;
+    }
   });
 }
 
 // ---------- Filtering ----------
 function applyFilter(filter) {
   activeFilter = filter;
-  const base = [...allMentors, ...articles, ...sponsored];
+  const base = [...allMentors, ...allArticles, ...sponsored];
 
   if (filter === "all") return renderFeed(shuffle(base));
   if (filter === "mentors") return renderFeed(allMentors);
-  if (filter === "articles") return renderFeed(articles);
+  if (filter === "articles") return renderFeed(allArticles);
 
   const filtered = base.filter(item => {
     if (item.category === filter) return true;
@@ -272,10 +285,11 @@ function shuffle(arr) {
 
 // ---------- Init ----------
 document.addEventListener("DOMContentLoaded", async () => {
-  allMentors = await loadMentors();
-  renderFeed(shuffle([...allMentors, ...articles, ...sponsored]));
+  wireFeedGrid();
 
-  // Chips
+  [allMentors, allArticles] = await Promise.all([loadMentors(), loadArticles()]);
+  renderFeed(shuffle([...allMentors, ...allArticles, ...sponsored]));
+
   document.querySelectorAll(".chip").forEach(chip => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".chip").forEach(c => c.classList.remove("is-active"));
@@ -284,20 +298,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Sidebar toggle (desktop collapse, mobile slide-in)
   const menuBtn = document.querySelector(".topbar__menu");
   const app = document.getElementById("app");
-  if (menuBtn && app) {
+  if (menuBtn && app && !menuBtn.dataset.wired) {
+    menuBtn.dataset.wired = "true";
     menuBtn.addEventListener("click", () => {
       const isMobile = window.matchMedia("(max-width: 1024px)").matches;
-      if (isMobile) {
-        app.classList.toggle("is-sidebar-open");
-      } else {
-        app.classList.toggle("is-sidebar-hidden");
-      }
+      if (isMobile) app.classList.toggle("is-sidebar-open");
+      else app.classList.toggle("is-sidebar-hidden");
     });
-
-    // Close mobile sidebar on backdrop click
     app.addEventListener("click", e => {
       if (e.target === app && app.classList.contains("is-sidebar-open")) {
         app.classList.remove("is-sidebar-open");
@@ -305,12 +314,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Search
   const search = document.getElementById("feed-search");
-  if (search) {
+  if (search && !search.dataset.wired) {
+    search.dataset.wired = "true";
     search.addEventListener("input", e => {
       const q = e.target.value.toLowerCase().trim();
-      const base = [...allMentors, ...articles, ...sponsored];
+      const base = [...allMentors, ...allArticles, ...sponsored];
       if (!q) return renderFeed(shuffle(base));
       const filtered = base.filter(item => {
         const haystack = [

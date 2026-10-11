@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Article — Skillme2</title>
+  <title>Article â€” Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -37,37 +37,53 @@
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
-      <article class="article" id="article">
-        <div class="article__cover">
-          <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1600&q=80" alt="">
+
+      <button class="back-btn" id="back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back
+      </button>
+
+      <div id="article-loading" class="skeleton-wrap">
+        <div class="skeleton skeleton--hero"></div>
+        <div class="skeleton skeleton--line"></div>
+        <div class="skeleton skeleton--line"></div>
+      </div>
+
+      <article class="article" id="article-content" hidden>
+        <div class="article__cover" id="article-cover-wrap">
+          <img id="article-cover" src="" alt="">
         </div>
 
         <header class="article__head">
-          <span class="eyebrow">Psychology</span>
-          <h1 class="article__title">Why Most Retail Traders Lose: The Psychology of Early Exits</h1>
+          <span class="eyebrow" id="article-category"></span>
+          <h1 class="article__title" id="article-title"></h1>
 
           <div class="article__meta">
-            <img class="article__author-avatar" src="https://i.pravatar.cc/80?u=aisha" alt="">
+            <img class="article__author-avatar" id="article-author-avatar" src="" alt="">
             <div>
-              <strong>By Aisha B.</strong>
-              <span>2 days ago · 6 min read</span>
+              <strong id="article-author"></strong>
+              <span id="article-date"></span>
             </div>
           </div>
         </header>
 
-        <div class="article__body">
-          <p>Fear of losing a small gain is the same emotion that causes traders to cut winners and let losers run. The asymmetry is psychological, not mathematical.</p>
-          <p>When a position moves into profit, the brain registers the gain as already yours. Closing it feels like protection. Holding it feels like risking something you already have. This is loss aversion firing in reverse — not against losing money, but against losing the feeling of having made money.</p>
-          <blockquote>The trade does not care whether you are in profit. It cares only whether your thesis is still valid.</blockquote>
-          <p>The fix is not willpower. It's system design. Pre-define your exit conditions before you enter. Write them down. Treat them as part of the trade's contract, not a decision you make in the moment.</p>
-          <p>Traders who cut winners early consistently underperform their own backtests. The edge was real. The execution destroyed it.</p>
+        <div class="article__body" id="article-body"></div>
+
+        <div class="article__actions">
+          <button class="btn btn--ghost" id="article-print">Download as PDF</button>
         </div>
       </article>
+
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
+  <script src="../js/modals.js"></script>
   <script src="../js/sidebar-shared.js"></script>
+  <script src="../js/page-article.js"></script>
 </body>
 </html>
