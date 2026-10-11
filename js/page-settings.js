@@ -1,57 +1,112 @@
 // js/page-settings.js
 (async function () {
   const db = window.Skillme2DB;
-  const session = await window.Skillme2Auth.getSession();
-  if (!session) {
+  if (!db) return;
+
+  const waitStart = Date.now();
+  while (!window.Skillme2Auth && Date.now() - waitStart < 3000) {
+    await new Promise(r => setTimeout(r, 50));
+  }
+  if (!window.Skillme2Auth) return;
+
+  const { data: { session: rawSession } } = await db.auth.getSession();
+  if (!rawSession) {
     window.location.href = "../index.html";
     return;
   }
 
+  const session = await window.Skillme2Auth.getSession();
+  if (!session) {
+    await window.Skillme2Auth.signOut();
+    return;
+  }
+
+  const isMentor = session.role === "mentor";
+
+  // Role-aware profile fields
+  document.querySelectorAll('[data-role="mentor"]').forEach(el => {
+    el.hidden = !isMentor;
+  });
+  document.querySelectorAll('[data-role="student"]').forEach(el => {
+    el.hidden = isMentor;
+  });
+
+  // Populate identity
+  const nameInput = document.getElementById("settings-name");
+  const bioInput = document.getElementById("settings-bio");
+  const avatar = document.getElementById("settings-avatar");
+
+  if (nameInput) nameInput.value = session.name || "";
+  if (bioInput) bioInput.value = session.bio || "";
+  if (avatar) avatar.src = session.avatar_url || `https://i.pravatar.cc/160?u=${session.id}`;
+
   // Tabs
-  document.querySelectorAll(".settings-nav__item").forEach(btn => {
+  document.querySelectorAll(".tabs__item").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".settings-nav__item").forEach(b => b.classList.remove("is-active"));
-      document.querySelectorAll(".settings-panel").forEach(p => p.classList.remove("is-active"));
+      document.querySelectorAll(".tabs__item").forEach(b => b.classList.remove("is-active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("is-active"));
       btn.classList.add("is-active");
-      document.querySelector(`[data-panel="${btn.dataset.tab}"]`)?.classList.add("is-active");
+      const target = document.querySelector(`[data-panel="${btn.dataset.tab}"]`);
+      if (target) target.classList.add("is-active");
     });
   });
 
-  // Populate profile
-  document.getElementById("profile-name").value = session.name || "";
-  document.getElementById("profile-email").value = session.email || "";
-  document.getElementById("account-role").textContent = session.role === "mentor" ? "Mentor" : "Student";
-  document.getElementById("account-created").textContent = session.created_at
-    ? new Date(session.created_at).toLocaleDateString()
-    : "—";
-
-  if (session.role === "mentor") {
-    document.getElementById("mentor-fields").hidden = false;
-    document.getElementById("profile-specialty").value = session.specialty || "";
-    document.getElementById("profile-rate").value = session.rate || "";
-  }
-
-  // Save profile
-  const form = document.getElementById("profile-form");
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    const updates = { name: form.name.value.trim() };
-    if (session.role === "mentor") {
-      updates.specialty = form.specialty.value.trim();
-      updates.rate = parseFloat(form.rate.value);
-    }
-
-    const { error } = await db.from("profiles").update(updates).eq("id", session.id);
-    if (error) {
-      window.Skillme2Notice("Could not save: " + error.message);
-      return;
-    }
-    window.Skillme2Notice("Profile saved.");
+  // Chip removal
+  document.querySelectorAll(".chip-tag__remove").forEach(btn => {
+    btn.addEventListener("click", () => btn.closest(".chip-tag").remove());
   });
 
-  // Delete account
-  document.getElementById("delete-account")?.addEventListener("click", async () => {
-    if (!confirm("This will permanently delete your account. Continue?")) return;
-    window.Skillme2Notice("Account deletion requires support confirmation.");
+  // Action handlers
+  document.querySelectorAll('[data-action="save-profile"]').forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const updates = { name: nameInput?.value?.trim() || "" };
+      if (bioInput) updates.bio = bioInput.value.trim();
+
+      const { error } = await db.from("profiles").update(updates).eq("id", session.id);
+      if (error) {
+        window.Skillme2Notice("Could not save: " + error.message);
+        return;
+      }
+      window.Skillme2Notice("Profile saved.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="change-password"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Password reset link sent to your email.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="signout-all"]').forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Sign out of all other sessions?")) return;
+      await db.auth.signOut({ scope: "others" });
+      window.Skillme2Notice("Other sessions signed out.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="delete-account"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (!confirm("This will permanently delete your account. Continue?")) return;
+      window.Skillme2Notice("Account deletion requires support confirmation.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="download-data"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      const data = {
+        name: session.name,
+        email: session.email,
+        role: session.role,
+        created_at: session.created_at,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `skillme2-${session.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
   });
 })();

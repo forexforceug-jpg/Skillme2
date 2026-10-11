@@ -3,207 +3,148 @@
   const db = window.Skillme2DB;
   if (!db) return;
 
-  const session = await window.Skillme2Auth.getSession();
-  if (!session) {
+  // Wait for auth
+  const waitStart = Date.now();
+  while (!window.Skillme2Auth && Date.now() - waitStart < 3000) {
+    await new Promise(r => setTimeout(r, 50));
+  }
+  if (!window.Skillme2Auth) return;
+
+  // Verify session without looping
+  const { data: { session: rawSession } } = await db.auth.getSession();
+  if (!rawSession) {
     window.location.href = "../index.html";
     return;
   }
+
+  const session = await window.Skillme2Auth.getSession();
+  if (!session) {
+    await window.Skillme2Auth.signOut();
+    return;
+  }
+
   if (session.role !== "student") {
     window.location.href = "dashboard-mentor.html";
     return;
   }
 
-  document.getElementById("first-name").textContent =
-    (session.name || "Student").split(" ")[0];
-  document.getElementById("dash-subtitle").textContent =
-    "Here's what's happening with your lessons.";
+  // Populate greeting
+  const firstName = (session.name || "Student").split(" ")[0];
+  const firstNameEl = document.getElementById("first-name");
+  if (firstNameEl) firstNameEl.textContent = firstName;
 
-  // Logout
-  document.getElementById("logout-btn")?.addEventListener("click", () => {
-    window.Skillme2Auth.signOut();
+  // ------------------------------------------------------------
+  // HARDCODED for now. When ready to wire Supabase, replace the
+  // blocks below with the real queries commented at the bottom.
+  // ------------------------------------------------------------
+
+  // Welcome subtitle
+  const sub = document.getElementById("welcome-sub");
+  if (sub) sub.textContent = "You have 1 lesson today. Next is at 3:00 PM.";
+
+  // ---------- Tabs ----------
+  document.querySelectorAll(".tabs__item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tabs__item").forEach(b => b.classList.remove("is-active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const target = document.querySelector(`[data-panel="${btn.dataset.tab}"]`);
+      if (target) target.classList.add("is-active");
+    });
   });
 
-  // Fetch bookings
-  const { data: bookings, error } = await db
+  // ---------- Action handlers ----------
+  document.querySelectorAll('[data-action="join"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Zoom link will be available 15 minutes before the lesson.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="reschedule"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Reschedule request sent to your mentor.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="cancel"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (confirm("Cancel this lesson? Refund policy applies.")) {
+        window.Skillme2Notice("Lesson cancelled.");
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-action="review"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Review form coming soon.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="rebook"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.location.href = "../index.html#feed";
+    });
+  });
+
+  // ---------- Action handlers ----------
+  document.querySelectorAll('[data-action="join"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Zoom link will be available 15 minutes before the lesson.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="reschedule"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Reschedule request sent to your mentor.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="cancel"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (confirm("Cancel this lesson? Refund policy applies.")) {
+        window.Skillme2Notice("Lesson cancelled.");
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-action="review"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.Skillme2Notice("Review form coming soon.");
+    });
+  });
+
+  document.querySelectorAll('[data-action="rebook"]').forEach(btn => {
+    btn.addEventListener("click", () => {
+      window.location.href = "../index.html#feed";
+    });
+  });
+
+  // ------------------------------------------------------------
+  // WHEN READY — Replace everything above with this:
+
+  /*
+  const { data: bookings } = await db
     .from("bookings")
     .select(`
-      id, scheduled_at, focus, status, duration_minutes,
+      id, scheduled_at, status, focus, duration_minutes,
       mentor_id,
       mentor_profiles (
-        profile_id, specialty, rate,
+        profile_id, specialty,
         profiles (name, avatar_url)
       )
     `)
     .eq("student_id", session.id)
     .order("scheduled_at", { ascending: true });
 
-  if (error) {
-    console.error("Bookings fetch failed:", error.message);
-    return;
-  }
-
   const now = Date.now();
-  const list = bookings || [];
-
-  const upcoming = list.filter(b =>
+  const upcoming = (bookings || []).filter(b =>
     new Date(b.scheduled_at).getTime() >= now &&
-    b.status !== "cancelled" &&
-    b.status !== "completed"
+    b.status !== "cancelled" && b.status !== "completed"
   );
-  const past = list.filter(b =>
-    new Date(b.scheduled_at).getTime() < now ||
-    b.status === "completed"
+  const past = (bookings || []).filter(b =>
+    new Date(b.scheduled_at).getTime() < now || b.status === "completed"
   );
 
-  // ---------- Stats ----------
-  const totalInvested = past.reduce((sum, b) =>
-    sum + Number(b.mentor_profiles?.rate || 0), 0);
-  const uniqueMentors = new Set(list.map(b => b.mentor_id)).size;
-
-  setText("stat-upcoming", upcoming.length);
-  setText("stat-completed", past.length);
-  setText("stat-invested", `$${totalInvested.toFixed(0)}`);
-  setText("stat-mentors", uniqueMentors);
-
-  // ---------- Next lesson banner ----------
-  const next = upcoming[0];
-  if (next) {
-    const mentor = next.mentor_profiles?.profiles;
-    document.getElementById("next-mentor-name").textContent = mentor?.name || "Mentor";
-    document.getElementById("next-mentor-specialty").textContent =
-      next.mentor_profiles?.specialty || "Trading Lesson";
-    document.getElementById("next-time").textContent = formatDateTime(next.scheduled_at);
-    document.getElementById("next-focus").textContent = next.focus || "1:1 Session";
-    document.getElementById("next-lesson-banner").hidden = false;
-
-    document.getElementById("next-join-btn").addEventListener("click", () => {
-      window.Skillme2Notice("Zoom link will be available 15 minutes before the lesson.");
-    });
-  }
-
-  // ---------- Upcoming list ----------
-  renderClassList("upcoming-list", upcoming, "upcoming");
-  renderClassList("past-list", past, "past");
-
-  // ---------- My mentors ----------
-  const mentorMap = new Map();
-  list.forEach(b => {
-    if (!b.mentor_id || mentorMap.has(b.mentor_id)) return;
-    const mp = b.mentor_profiles;
-    mentorMap.set(b.mentor_id, {
-      id: b.mentor_id,
-      name: mp?.profiles?.name || "Mentor",
-      specialty: mp?.specialty || "",
-      photo: mp?.profiles?.avatar_url,
-      rate: mp?.rate,
-    });
-  });
-
-  const mentorsList = document.getElementById("mentors-list");
-  if (mentorMap.size) {
-    mentorsList.innerHTML = Array.from(mentorMap.values()).map(m => `
-      <a href="mentor.html?id=${m.id}" class="mentor-chip">
-        <img class="mentor-chip__avatar" src="${m.photo || `https://i.pravatar.cc/100?u=${m.id}`}" alt="">
-        <div class="mentor-chip__body">
-          <strong>${m.name}</strong>
-          <span>${m.specialty}</span>
-        </div>
-      </a>
-    `).join("");
-  } else {
-    mentorsList.innerHTML = `<div class="dash-empty"><p>You haven't booked any mentors yet.</p></div>`;
-  }
-
-  // ---------- Reviews ----------
-  const { data: reviews } = await db
-    .from("reviews")
-    .select(`
-      id, rating, comment, created_at,
-      profiles!reviews_mentor_id_fkey (name)
-    `)
-    .eq("student_id", session.id)
-    .order("created_at", { ascending: false })
-    .limit(5);
-
-  const reviewsList = document.getElementById("reviews-list");
-  if (reviews && reviews.length) {
-    reviewsList.innerHTML = reviews.map(r => `
-      <div class="mentor-review">
-        <div class="mentor-review__head">
-          <strong>${r.profiles?.name || "Mentor"}</strong>
-          <span class="mentor-review__stars">${"★".repeat(r.rating)}</span>
-        </div>
-        ${r.comment ? `<p class="mentor-review__body">${r.comment}</p>` : ""}
-        <span class="mentor-review__date">${formatDate(r.created_at)}</span>
-      </div>
-    `).join("");
-  }
-
-  // ---------- Render class list ----------
-  function renderClassList(id, items, kind) {
-    const el = document.getElementById(id);
-    if (!items.length) {
-      el.innerHTML = `<div class="dash-empty"><p>${
-        kind === "upcoming"
-          ? "No upcoming lessons. Browse mentors and book your first session."
-          : "No past lessons yet."
-      }</p></div>`;
-      return;
-    }
-
-    el.innerHTML = items.map(b => {
-      const mentor = b.mentor_profiles?.profiles;
-      const photo = mentor?.avatar_url || `https://i.pravatar.cc/100?u=${b.mentor_id}`;
-      const status = b.status || "pending";
-
-      return `
-        <div class="class-item">
-          <img class="class-item__avatar" src="${photo}" alt="">
-          <div class="class-item__body">
-            <div class="class-item__title">${mentor?.name || "Mentor"}</div>
-            <div class="class-item__sub">${b.focus || b.mentor_profiles?.specialty || "1:1 Lesson"}</div>
-          </div>
-          <div class="class-item__meta">
-            <span class="class-item__time">${formatDateTime(b.scheduled_at)}</span>
-            <span class="status-pill status-pill--${status}">${status}</span>
-            ${kind === "upcoming" ? `<button class="dash-row__action" data-join="${b.id}">Join Zoom</button>` : ""}
-            ${kind === "past" && status === "completed" ? `<button class="dash-row__action" data-review="${b.id}">Leave a Review</button>` : ""}
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    // Wire buttons
-    el.querySelectorAll("[data-join]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        window.Skillme2Notice("Zoom link will be available 15 minutes before the lesson.");
-      });
-    });
-
-    el.querySelectorAll("[data-review]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        window.Skillme2Notice("Review form coming soon.");
-      });
-    });
-  }
-
-  function setText(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
-  }
-
-  function formatDate(iso) {
-    if (!iso) return "";
-    return new Date(iso).toLocaleDateString(undefined, {
-      month: "short", day: "numeric", year: "numeric",
-    });
-  }
-
-  function formatDateTime(iso) {
-    if (!iso) return "";
-    return new Date(iso).toLocaleString(undefined, {
-      weekday: "short", month: "short", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
-    });
-  }
+  // Render into #next-lesson, #upcoming-list, #past-list, etc.
+  */
 })();

@@ -1,47 +1,54 @@
 // js/page-inbox.js
 (async function () {
-  const session = await window.Skillme2Auth.getSession();
-  if (!session) {
+  const db = window.Skillme2DB;
+  if (!db) return;
+
+  const waitStart = Date.now();
+  while (!window.Skillme2Auth && Date.now() - waitStart < 3000) {
+    await new Promise(r => setTimeout(r, 50));
+  }
+  if (!window.Skillme2Auth) return;
+
+  const { data: { session: rawSession } } = await db.auth.getSession();
+  if (!rawSession) {
     window.location.href = "../index.html";
     return;
   }
 
-  const list = document.getElementById("inbox-list");
-  const thread = document.getElementById("inbox-thread");
+  const session = await window.Skillme2Auth.getSession();
+  if (!session) {
+    await window.Skillme2Auth.signOut();
+    return;
+  }
 
-  // Sample conversations (replace with real messages table later)
-  const sample = [
-    { id: 1, name: "Daniel K.", preview: "Great session today. Review the trade journal before Friday.", time: "2m" },
-    { id: 2, name: "Aisha B.", preview: "Here's the psychology worksheet I mentioned.", time: "1h" },
-    { id: 3, name: "Sarah M.", preview: "Confirming our lesson tomorrow at 10 AM EAT.", time: "3h" },
-  ];
-
-  list.innerHTML = sample.map(c => `
-    <div class="inbox-item" data-id="${c.id}">
-      <img class="inbox-item__avatar" src="https://i.pravatar.cc/100?u=${c.id}" alt="">
-      <div class="inbox-item__body">
-        <div class="inbox-item__name">${c.name}</div>
-        <div class="inbox-item__preview">${c.preview}</div>
-      </div>
-    </div>
-  `).join("");
-
-  list.querySelectorAll(".inbox-item").forEach(item => {
-    item.addEventListener("click", () => {
-      const c = sample.find(s => s.id === Number(item.dataset.id));
-      thread.innerHTML = `
-        <div style="padding:2rem;width:100%;align-self:stretch;">
-          <div style="border-bottom:1px solid var(--surface-line);padding-bottom:1rem;margin-bottom:1.5rem;">
-            <h3 style="color:#fff;font-size:1.1rem;font-weight:700;">${c.name}</h3>
-            <p style="color:var(--text-muted);font-size:0.85rem;margin-top:0.25rem;">${c.time} ago</p>
-          </div>
-          <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.7;">${c.preview}</p>
-          <div style="margin-top:2rem;display:flex;gap:0.5rem;">
-            <input type="text" placeholder="Type a message…" style="flex:1;padding:0.75rem 1rem;background:var(--surface-panel);border:1px solid var(--surface-line-strong);border-radius:8px;color:#fff;font-family:inherit;">
-            <button class="btn btn--navy">Send</button>
-          </div>
-        </div>
-      `;
+  // Conversation switching (visual only for now)
+  document.querySelectorAll(".inbox-conv").forEach(conv => {
+    conv.addEventListener("click", () => {
+      document.querySelectorAll(".inbox-conv").forEach(c => c.classList.remove("is-active"));
+      conv.classList.add("is-active");
     });
   });
+
+  // Send button
+  const sendBtn = document.querySelector('[data-action="send"]');
+  const composerInput = document.querySelector(".inbox-composer input");
+  if (sendBtn && composerInput) {
+    sendBtn.addEventListener("click", () => {
+      const text = composerInput.value.trim();
+      if (!text) return;
+      // TODO: insert into messages table
+      window.Skillme2Notice("Message sent (not yet persisted).");
+      composerInput.value = "";
+    });
+    composerInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") sendBtn.click();
+    });
+  }
+
+  // When ready, replace with real Supabase:
+  // 1. Fetch messages where sender_id or recipient_id = session.id
+  // 2. Group by conversation partner
+  // 3. Render conversation list
+  // 4. Load thread messages on conversation click
+  // 5. Insert new message on send
 })();

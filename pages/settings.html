@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings â€” Skillme2</title>
+  <title>Settings — Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/feed.css">
   <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/settings.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
 <body class="feed">
@@ -28,129 +29,219 @@
       </a>
     </div>
     <div class="topbar__center"></div>
-    <div class="topbar__right">
-      <button class="btn btn--navy" data-action="session">Sign In</button>
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
   <div class="app" id="app">
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
+
       <div class="page-head">
         <div>
           <span class="eyebrow">Settings</span>
-          <h1 class="page-title">Account Settings</h1>
-          <p class="page-desc">Manage your profile, preferences, and security.</p>
+          <h1 class="page-title">Settings</h1>
+          <p class="page-desc">Manage your profile, account, and preferences.</p>
         </div>
       </div>
 
-      <div class="settings-layout">
-        <nav class="settings-nav">
-          <button class="settings-nav__item is-active" data-tab="profile">Profile</button>
-          <button class="settings-nav__item" data-tab="account">Account</button>
-          <button class="settings-nav__item" data-tab="notifications">Notifications</button>
-          <button class="settings-nav__item" data-tab="security">Security</button>
-          <button class="settings-nav__item" data-tab="danger">Danger Zone</button>
-        </nav>
+      <nav class="tabs" role="tablist">
+        <button class="tabs__item is-active" data-tab="profile" role="tab">Profile</button>
+        <button class="tabs__item" data-tab="account" role="tab">Account</button>
+        <button class="tabs__item" data-tab="notifications" role="tab">Notifications</button>
+        <button class="tabs__item" data-tab="privacy" role="tab">Privacy</button>
+      </nav>
 
-        <div class="settings-content">
-          <!-- Profile -->
-          <div class="settings-panel is-active" data-panel="profile">
-            <h2>Profile</h2>
-            <p class="settings-panel__desc">This is how others see you on Skillme2.</p>
+      <!-- PROFILE -->
+      <section class="tab-panel is-active" data-panel="profile">
+        <div class="settings-form">
 
-            <form class="settings-form" id="profile-form">
-              <div class="settings-avatar">
-                <img id="profile-avatar" src="https://i.pravatar.cc/120?u=you" alt="">
-                <button type="button" class="btn btn--ghost">Change Photo</button>
-              </div>
-
-              <label>
-                <span>Full Name</span>
-                <input type="text" name="name" id="profile-name" required>
-              </label>
-              <label>
-                <span>Email</span>
-                <input type="email" name="email" id="profile-email" disabled>
-              </label>
-
-              <div id="mentor-fields" hidden>
-                <label>
-                  <span>Specialty</span>
-                  <input type="text" name="specialty" id="profile-specialty">
-                </label>
-                <label>
-                  <span>Rate per lesson (USD)</span>
-                  <input type="number" name="rate" id="profile-rate" min="5">
-                </label>
-                <label>
-                  <span>Bio</span>
-                  <textarea name="bio" id="profile-bio" rows="4"></textarea>
-                </label>
-              </div>
-
-              <button type="submit" class="btn btn--navy">Save Changes</button>
-            </form>
-          </div>
-
-          <!-- Account -->
-          <div class="settings-panel" data-panel="account">
-            <h2>Account</h2>
-            <p class="settings-panel__desc">Basic account information.</p>
-            <div class="settings-row">
-              <div>
-                <strong>Role</strong>
-                <span id="account-role">â€”</span>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div>
-                <strong>Member since</strong>
-                <span id="account-created">â€”</span>
+          <div class="settings-block">
+            <label class="settings-block__label">Profile Photo</label>
+            <div class="avatar-upload">
+              <img src="https://i.pravatar.cc/160?u=you" alt="" id="settings-avatar">
+              <div class="avatar-upload__actions">
+                <button class="btn btn--ghost" type="button">Upload new</button>
+                <button class="btn btn--ghost" type="button">Remove</button>
+                <p class="avatar-upload__hint">JPG or PNG. Max 2MB.</p>
               </div>
             </div>
           </div>
 
-          <!-- Notifications -->
-          <div class="settings-panel" data-panel="notifications">
-            <h2>Notifications</h2>
-            <p class="settings-panel__desc">Choose what you want to be notified about.</p>
-            <label class="toggle-row">
-              <input type="checkbox" checked>
-              <span>Lesson reminders</span>
-            </label>
-            <label class="toggle-row">
-              <input type="checkbox" checked>
-              <span>New messages</span>
-            </label>
-            <label class="toggle-row">
-              <input type="checkbox">
-              <span>Marketing emails</span>
-            </label>
+          <div class="settings-block">
+            <label class="settings-block__label">Display Name</label>
+            <input class="settings-input" type="text" id="settings-name" value="John Doe">
           </div>
 
-          <!-- Security -->
-          <div class="settings-panel" data-panel="security">
-            <h2>Security</h2>
-            <p class="settings-panel__desc">Keep your account secure.</p>
-            <button class="btn btn--ghost">Change Password</button>
-            <button class="btn btn--ghost">Enable Two-Factor Auth</button>
+          <div class="settings-block">
+            <label class="settings-block__label">Email</label>
+            <input class="settings-input" type="email" value="john@example.com" disabled>
+            <p class="settings-hint">Changing email requires confirmation.</p>
           </div>
 
-          <!-- Danger -->
-          <div class="settings-panel" data-panel="danger">
+          <div class="settings-block">
+            <label class="settings-block__label">Bio</label>
+            <textarea class="settings-input" id="settings-bio" rows="4">I've been trading forex for 5 years, focusing on risk management and market structure.</textarea>
+            <p class="settings-hint">0 / 500 characters</p>
+          </div>
+
+          <!-- Student-only -->
+          <div class="settings-block" data-role="student">
+            <label class="settings-block__label">Interests</label>
+            <div class="chip-input">
+              <span class="chip-tag">Forex <button type="button" class="chip-tag__remove">×</button></span>
+              <span class="chip-tag">Crypto <button type="button" class="chip-tag__remove">×</button></span>
+              <span class="chip-tag">Risk Management <button type="button" class="chip-tag__remove">×</button></span>
+              <button type="button" class="chip-add">+ Add</button>
+            </div>
+          </div>
+
+          <!-- Mentor-only -->
+          <div data-role="mentor" hidden>
+            <div class="settings-block">
+              <label class="settings-block__label">Specialty</label>
+              <input class="settings-input" type="text" value="Forex, Crypto">
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label">Years of experience</label>
+              <input class="settings-input" type="number" value="8" min="1">
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label">Rate per lesson (USD)</label>
+              <input class="settings-input" type="number" value="35" min="5" step="1">
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label">Tags</label>
+              <div class="chip-input">
+                <span class="chip-tag">Risk <button type="button" class="chip-tag__remove">×</button></span>
+                <span class="chip-tag">Price Action <button type="button" class="chip-tag__remove">×</button></span>
+                <button type="button" class="chip-add">+ Add</button>
+              </div>
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label">Quote</label>
+              <input class="settings-input" type="text" value="The market rewards patience, not prediction.">
+            </div>
+          </div>
+
+          <button class="btn btn--navy" data-action="save-profile">Save Changes</button>
+
+        </div>
+      </section>
+
+      <!-- ACCOUNT -->
+      <section class="tab-panel" data-panel="account">
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>Password</h2>
+          </div>
+          <div class="settings-card__body">
+            <button class="btn btn--ghost" data-action="change-password">Change password</button>
+            <p class="settings-hint" style="margin-top:0.75rem;">Last changed: 3 months ago</p>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>Sessions</h2>
+          </div>
+          <div class="settings-card__body">
+            <div class="session-row">
+              <div>
+                <strong>📱 Chrome · Windows · Kampala</strong>
+                <span class="settings-hint">Current session · Active now</span>
+              </div>
+            </div>
+            <div class="session-row">
+              <div>
+                <strong>📱 Safari · iPhone · Kampala</strong>
+                <span class="settings-hint">Last active 2 days ago</span>
+              </div>
+              <button class="btn btn--ghost">Sign out</button>
+            </div>
+            <button class="btn btn--ghost" style="margin-top:1rem;" data-action="signout-all">Sign out all other sessions</button>
+          </div>
+        </div>
+
+        <div class="settings-card settings-card--danger">
+          <div class="settings-card__head">
             <h2>Danger Zone</h2>
-            <p class="settings-panel__desc">Irreversible actions. Proceed with caution.</p>
-            <button class="btn btn--danger" id="delete-account">Delete Account</button>
+          </div>
+          <div class="settings-card__body">
+            <p class="settings-hint">Deleting your account permanently removes your profile, bookings, and messages. This cannot be undone.</p>
+            <button class="btn btn--danger" data-action="delete-account">Delete account</button>
           </div>
         </div>
-      </div>
+
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section class="tab-panel" data-panel="notifications">
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>Email Notifications</h2>
+          </div>
+          <div class="settings-card__body">
+            <label class="toggle"><input type="checkbox" checked><span>Booking confirmed</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Lesson reminder (24h before)</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>New message</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Payment received</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Payout sent</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>New review</span></label>
+            <label class="toggle"><input type="checkbox"><span>Weekly summary</span></label>
+            <label class="toggle"><input type="checkbox"><span>Product updates</span></label>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>In-App Notifications</h2>
+          </div>
+          <div class="settings-card__body">
+            <label class="toggle"><input type="checkbox" checked><span>Booking requests</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>New messages</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Review received</span></label>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PRIVACY -->
+      <section class="tab-panel" data-panel="privacy">
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>Profile Visibility</h2>
+          </div>
+          <div class="settings-card__body">
+            <label class="toggle"><input type="checkbox" checked><span>Show my profile in search</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Show my lesson count</span></label>
+            <label class="toggle"><input type="checkbox" checked><span>Show my reviews</span></label>
+            <label class="toggle"><input type="checkbox"><span>Show my online status</span></label>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <div class="settings-card__head">
+            <h2>Your Data</h2>
+          </div>
+          <div class="settings-card__body">
+            <button class="btn btn--ghost" data-action="download-data">Download my data</button>
+            <p class="settings-hint" style="margin-top:0.75rem;">Get a copy of your data as a JSON file.</p>
+            <a href="privacy.html" class="settings-link">View privacy policy →</a>
+          </div>
+        </div>
+
+      </section>
+
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
+  <script src="../js/modals.js"></script>
   <script src="../js/sidebar-shared.js"></script>
   <script src="../js/page-settings.js"></script>
 </body>

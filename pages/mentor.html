@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mentor Profile â€” Skillme2</title>
-  <meta name="description" content="View a trader-mentor's profile, specialties, availability, and reviews.">
+  <title>Mentor Profile — Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,6 +12,7 @@
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/feed.css">
   <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/profile.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
 <body class="feed">
@@ -29,9 +29,7 @@
       </a>
     </div>
     <div class="topbar__center"></div>
-    <div class="topbar__right">
-      <button class="btn btn--navy" data-action="session">Sign In</button>
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
   <div class="app" id="app">
@@ -39,98 +37,249 @@
 
     <main class="main">
 
-      <!-- Back arrow -->
-      <button class="back-btn" id="back-btn">
+      <!-- Back -->
+      <a href="../index.html" class="back-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-        Back
-      </button>
+        Back to mentors
+      </a>
 
-      <!-- Loading skeleton -->
-      <div id="mentor-loading" class="skeleton-wrap">
-        <div class="skeleton skeleton--hero"></div>
-        <div class="skeleton skeleton--line"></div>
-        <div class="skeleton skeleton--line"></div>
-      </div>
+      <!-- Hero banner -->
+      <section class="mentor-hero">
+        <img class="mentor-hero__avatar" src="https://i.pravatar.cc/240?u=daniel-k" alt="Daniel K.">
+        <div class="mentor-hero__info">
+          <div class="mentor-hero__badges">
+            <span class="badge badge--verified">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+              Verified Trader
+            </span>
+          </div>
+          <h1 class="mentor-hero__name">Daniel K.</h1>
+          <p class="mentor-hero__meta">Forex & XAUUSD · 8 years experience · Kampala, Uganda</p>
+          <div class="mentor-hero__stats">
+            <span class="mentor-hero__rating">★ 4.9 <small>(47 reviews)</small></span>
+            <span class="mentor-hero__dot">·</span>
+            <span>312 lessons taught</span>
+            <span class="mentor-hero__dot">·</span>
+            <span>Usually responds in 2h</span>
+          </div>
+          <div class="mentor-hero__actions">
+            <button class="btn btn--navy" data-action="book">
+              Book a Lesson — $35/hr
+            </button>
+            <button class="btn btn--ghost" data-action="message">
+              Message
+            </button>
+          </div>
+        </div>
+      </section>
 
-      <!-- Mentor content -->
-      <article id="mentor-content" hidden>
+      <!-- Tabs -->
+      <nav class="tabs" role="tablist">
+        <button class="tabs__item is-active" data-tab="about" role="tab">About</button>
+        <button class="tabs__item" data-tab="availability" role="tab">Availability</button>
+        <button class="tabs__item" data-tab="reviews" role="tab">Reviews (47)</button>
+        <button class="tabs__item" data-tab="articles" role="tab">Articles</button>
+      </nav>
 
-        <!-- Header -->
-        <div class="mentor-profile__hero">
-          <img class="mentor-profile__photo" id="mentor-photo" src="" alt="">
-          <div class="mentor-profile__intro">
-            <div class="mentor-profile__badges" id="mentor-badges"></div>
-            <h1 class="mentor-profile__name" id="mentor-name"></h1>
-            <p class="mentor-profile__specialty" id="mentor-specialty"></p>
+      <!-- ABOUT -->
+      <section class="tab-panel is-active" data-panel="about">
+        <div class="two-col">
+          <div class="two-col__main">
+            <h2>About</h2>
+            <p>I've traded forex for 8 years, specializing in XAUUSD and the majors. My approach is structured, methodical, and focused on risk management above all else.</p>
+            <p>I don't teach shortcuts. I teach the same framework I use in my own trading — market structure, entry timing, position sizing, and the psychology to hold a trade when it goes against you.</p>
+            <p>Sessions are tailored to you. Bring your recent trades. We'll review what worked, what didn't, and why. By the end of your first lesson, you'll have a checklist you can apply to your next trade.</p>
 
-            <div class="mentor-profile__stats">
-              <div class="mentor-stat">
-                <span class="mentor-stat__value" id="mentor-rating">â€”</span>
-                <span class="mentor-stat__label">Rating</span>
+            <h3>Teaching approach</h3>
+            <p>We start with a diagnosis. Where are you losing money? Is it entries, exits, or psychology? Once we know that, we build the fix around your actual trading, not a textbook.</p>
+
+            <h3>Specialties</h3>
+            <div class="tag-list">
+              <span class="tag">Price Action</span>
+              <span class="tag">Risk Management</span>
+              <span class="tag">ICT Concepts</span>
+              <span class="tag">XAUUSD</span>
+              <span class="tag">Market Structure</span>
+              <span class="tag">Trading Psychology</span>
+            </div>
+          </div>
+
+          <aside class="two-col__side">
+            <div class="quick-facts">
+              <h3>Quick facts</h3>
+              <div class="quick-facts__row">
+                <span>Markets</span>
+                <strong>Forex, XAUUSD</strong>
               </div>
-              <div class="mentor-stat">
-                <span class="mentor-stat__value" id="mentor-reviews">0</span>
-                <span class="mentor-stat__label">Reviews</span>
+              <div class="quick-facts__row">
+                <span>Style</span>
+                <strong>Swing, Intraday</strong>
               </div>
-              <div class="mentor-stat">
-                <span class="mentor-stat__value" id="mentor-lessons">0</span>
-                <span class="mentor-stat__label">Lessons</span>
+              <div class="quick-facts__row">
+                <span>Languages</span>
+                <strong>English, Swahili</strong>
               </div>
-              <div class="mentor-stat">
-                <span class="mentor-stat__value" id="mentor-experience">â€”</span>
-                <span class="mentor-stat__label">Experience</span>
+              <div class="quick-facts__row">
+                <span>Response time</span>
+                <strong>~2 hours</strong>
+              </div>
+              <div class="quick-facts__row">
+                <span>Timezone</span>
+                <strong>EAT (UTC+3)</strong>
               </div>
             </div>
 
-            <div class="mentor-profile__actions">
-              <button class="btn btn--navy" id="mentor-book-btn">
-                Book a Lesson Â· <span id="mentor-price">$0</span>
-              </button>
-              <button class="btn btn--ghost" id="mentor-message-btn">
-                Message
-              </button>
+            <div class="verification-card">
+              <h3>Verified</h3>
+              <div class="verification-card__row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Broker statements reviewed
+              </div>
+              <div class="verification-card__row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                8 years of trading history
+              </div>
+              <div class="verification-card__row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                Identity confirmed
+              </div>
             </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- AVAILABILITY -->
+      <section class="tab-panel" data-panel="availability">
+        <h2>Weekly availability</h2>
+        <p class="section-desc">All times shown in East Africa Time (UTC+3).</p>
+
+        <div class="availability-grid">
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Mon</div>
+            <button class="slot-pill is-on">9:00</button>
+            <button class="slot-pill is-on">10:00</button>
+            <button class="slot-pill is-on">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Tue</div>
+            <button class="slot-pill is-on">9:00</button>
+            <button class="slot-pill is-on">10:00</button>
+            <button class="slot-pill is-on">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Wed</div>
+            <button class="slot-pill">9:00</button>
+            <button class="slot-pill">10:00</button>
+            <button class="slot-pill">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Thu</div>
+            <button class="slot-pill is-on">9:00</button>
+            <button class="slot-pill is-on">10:00</button>
+            <button class="slot-pill is-on">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Fri</div>
+            <button class="slot-pill is-on">9:00</button>
+            <button class="slot-pill is-on">10:00</button>
+            <button class="slot-pill is-on">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Sat</div>
+            <button class="slot-pill">9:00</button>
+            <button class="slot-pill">10:00</button>
+            <button class="slot-pill">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+          <div class="availability-day-col">
+            <div class="availability-day-col__head">Sun</div>
+            <button class="slot-pill">9:00</button>
+            <button class="slot-pill">10:00</button>
+            <button class="slot-pill">11:00</button>
+            <button class="slot-pill">14:00</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- REVIEWS -->
+      <section class="tab-panel" data-panel="reviews">
+        <h2>Reviews</h2>
+        <p class="section-desc">4.9 average from 47 reviews</p>
+
+        <div class="review-list">
+          <div class="review">
+            <div class="review__head">
+              <strong>Sarah M.</strong>
+              <span class="review__stars">★★★★★</span>
+              <span class="review__date">2 weeks ago</span>
+            </div>
+            <p class="review__body">Patient, structured, and genuinely knows his stuff. He walked me through my last 10 trades and found a pattern I'd never noticed. Booked three more sessions already.</p>
+          </div>
+
+          <div class="review">
+            <div class="review__head">
+              <strong>Tunde A.</strong>
+              <span class="review__stars">★★★★★</span>
+              <span class="review__date">1 month ago</span>
+            </div>
+            <p class="review__body">Daniel explained market structure in a way that finally made it click. I've taken courses before, but nothing stuck like this. Worth every dollar.</p>
+          </div>
+
+          <div class="review">
+            <div class="review__head">
+              <strong>Esther W.</strong>
+              <span class="review__stars">★★★★★</span>
+              <span class="review__date">1 month ago</span>
+            </div>
+            <p class="review__body">Very methodical. Doesn't waste time. Came away with a concrete plan for my XAUUSD trading.</p>
           </div>
         </div>
 
-        <!-- Bio -->
-        <section class="mentor-profile__section">
-          <h2>About</h2>
-          <p id="mentor-bio">No bio provided yet.</p>
-        </section>
+        <button class="btn btn--ghost" style="margin-top:1.5rem;">See all 47 reviews</button>
+      </section>
 
-        <!-- Tags -->
-        <section class="mentor-profile__section" id="mentor-tags-section">
-          <h2>Specialties</h2>
-          <div class="mentor-profile__tags" id="mentor-tags"></div>
-        </section>
+      <!-- ARTICLES -->
+      <section class="tab-panel" data-panel="articles">
+        <h2>Articles by Daniel K.</h2>
+        <p class="section-desc">Strategy notes and market observations.</p>
 
-        <!-- Quote -->
-        <section class="mentor-profile__section" id="mentor-quote-section">
-          <blockquote class="mentor-profile__quote" id="mentor-quote"></blockquote>
-        </section>
-
-        <!-- Availability -->
-        <section class="mentor-profile__section">
-          <h2>Availability</h2>
-          <div class="mentor-profile__availability" id="mentor-availability">
-            <p class="mentor-profile__empty">No availability set.</p>
-          </div>
-        </section>
-
-        <!-- Reviews -->
-        <section class="mentor-profile__section">
-          <h2>Reviews</h2>
-          <div id="mentor-reviews-list">
-            <p class="mentor-profile__empty">No reviews yet.</p>
-          </div>
-        </section>
-
-      </article>
+        <div class="articles-grid">
+          <a href="article.html?slug=reading-market-structure" class="article-mini">
+            <div class="article-mini__cover">
+              <img src="https://images.unsplash.com/photo-1543286386-713bdd548da4?w=800&q=70" alt="">
+            </div>
+            <h3 class="article-mini__title">Reading Market Structure Before You Enter</h3>
+            <span class="article-mini__meta">5 min read · 2 weeks ago</span>
+          </a>
+          <a href="article.html?slug=risk-management-the-only-edge" class="article-mini">
+            <div class="article-mini__cover">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=70" alt="">
+            </div>
+            <h3 class="article-mini__title">Risk Management: The Only Edge That Compounds</h3>
+            <span class="article-mini__meta">8 min read · 1 month ago</span>
+          </a>
+        </div>
+      </section>
 
     </main>
+  </div>
+
+  <!-- Sticky mobile book bar -->
+  <div class="sticky-book-bar">
+    <div>
+      <strong>$35/hr</strong>
+      <span>Daniel K.</span>
+    </div>
+    <button class="btn btn--navy" data-action="book">Book Lesson</button>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

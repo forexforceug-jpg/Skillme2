@@ -1,0 +1,243 @@
+/* ============================================
+   SKILLME2 — SETTINGS
+   ============================================ */
+
+.settings-form {
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-block__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.settings-input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 74, 0.12);
+}
+.settings-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+textarea.settings-input { resize: vertical; min-height: 100px; }
+
+.settings-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.settings-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+.settings-link:hover { text-decoration: underline; }
+
+/* ---------- AVATAR UPLOAD ---------- */
+.avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.avatar-upload img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--surface-line-strong);
+}
+.avatar-upload__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.avatar-upload__actions .btn {
+  padding: 0.55rem 0.95rem;
+  font-size: 0.8rem;
+}
+.avatar-upload__hint {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+/* ---------- CHIP INPUT ---------- */
+.chip-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 8px;
+}
+.chip-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  background: rgba(201, 162, 74, 0.1);
+  border: 1px solid rgba(201, 162, 74, 0.3);
+  border-radius: 6px;
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.chip-tag__remove {
+  color: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  opacity: 0.6;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.chip-tag__remove:hover { opacity: 1; }
+.chip-add {
+  padding: 0.3rem 0.65rem;
+  background: transparent;
+  border: 1px dashed var(--surface-line-strong);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip-add:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ---------- SETTINGS CARDS ---------- */
+.settings-card {
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+.settings-card__head {
+  padding: 1.1rem 1.5rem;
+  border-bottom: 1px solid var(--surface-line);
+}
+.settings-card__head h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.settings-card__body {
+  padding: 1.5rem;
+}
+.settings-card--danger {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.settings-card--danger .settings-card__head {
+  background: rgba(239, 68, 68, 0.05);
+}
+.settings-card--danger .settings-card__head h2 { color: #FCA5A5; }
+
+/* ---------- SESSION ROW ---------- */
+.session-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--surface-line);
+  flex-wrap: wrap;
+}
+.session-row:last-child { border-bottom: none; }
+.session-row strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  margin-bottom: 0.2rem;
+}
+
+/* ---------- TOGGLE ---------- */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--surface-line);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.toggle:last-child { border-bottom: none; }
+.toggle input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 38px;
+  height: 22px;
+  background: var(--navy-950);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.toggle input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+.toggle input:checked {
+  background: var(--accent-teal);
+  border-color: var(--accent-teal);
+}
+.toggle input:checked::after {
+  left: calc(100% - 18px);
+  background: #fff;
+}
+.toggle span {
+  flex: 1;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .settings-card__body { padding: 1.1rem 1.25rem; }
+  .avatar-upload { flex-direction: column; align-items: flex-start; }
+  .avatar-upload__actions { width: 100%; }
+  .avatar-upload__actions .btn { flex: 1; justify-content: center; }
+}
