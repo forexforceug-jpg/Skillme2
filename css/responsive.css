@@ -1,8 +1,8 @@
-/* ============================================
-   SKILLME2 — RESPONSIVE
+﻿/* ============================================
+   SKILLME2 â€” RESPONSIVE
    ============================================ */
 
-/* ============ TABLET (≤1024px) ============ */
+/* ============ TABLET (â‰¤1024px) ============ */
 @media (max-width: 1024px) {
   .app {
     display: block;
@@ -81,7 +81,7 @@
   }
 }
 
-/* ============ SMALL TABLET (≤768px) ============ */
+/* ============ SMALL TABLET (â‰¤768px) ============ */
 @media (max-width: 768px) {
   .topbar {
     padding: 0 1rem;
@@ -94,11 +94,6 @@
   .main { padding: 0 1rem 3rem; }
 
   .chips-wrap { padding: 1rem 0 0.85rem; }
-
-  .feed-grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
 
   .lesson-card__body { padding: 1rem; }
 
@@ -149,7 +144,7 @@
   }
 }
 
-/* ============ MOBILE (≤640px) ============ */
+/* ============ MOBILE (â‰¤640px) ============ */
 @media (max-width: 640px) {
   .topbar { padding: 0 0.75rem; gap: 0.5rem; }
   .topbar__search { padding: 0.5rem 0.85rem; }
@@ -240,7 +235,7 @@
   .course-preview-card { max-width: 100%; }
 }
 
-/* ============ VERY SMALL (≤400px) ============ */
+/* ============ VERY SMALL (â‰¤400px) ============ */
 @media (max-width: 400px) {
   .topbar__logo img { height: 18px; }
   .topbar__search input { font-size: 0.78rem; }
@@ -263,5 +258,35 @@
 @media (max-width: 1024px) {
   body.sidebar-open {
     overflow: hidden;
+  }
+}
+/* ============================================================
+   SKILLME2 - FEED GRID RESPONSIVE (regenerated)
+   iPad portrait & landscape = 2 columns
+   iPhone = 1 column
+   Desktop = auto-fill (unchanged)
+   ============================================================ */
+
+/* iPad portrait and small tablets — force 2 columns */
+@media (min-width: 481px) and (max-width: 900px) {
+  .feed-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem 1rem;
+  }
+}
+
+/* Larger tablets in landscape (901px–1024px) — still 2 columns */
+@media (min-width: 901px) and (max-width: 1024px) {
+  .feed-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1.25rem;
+  }
+}
+
+/* Phones — 1 column */
+@media (max-width: 480px) {
+  .feed-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
