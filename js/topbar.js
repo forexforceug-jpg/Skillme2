@@ -20,17 +20,7 @@
       return;
     }
 
-    const wallet = await auth.getWallet();
-    const balance = Number(wallet?.balance || 0).toFixed(2);
-
     slot.innerHTML = `
-      <a href="${p}wallet.html" class="wallet-chip" title="Your wallet">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="5" width="20" height="14" rx="2"/>
-          <path d="M2 10h20"/>
-        </svg>
-        $${balance}
-      </a>
 
       <button class="profile-avatar-btn" data-avatar-trigger aria-label="Account menu">
         <img class="profile-avatar-btn__img" src="${session.avatar_url || `https://i.pravatar.cc/100?u=${session.id}`}" alt="">
