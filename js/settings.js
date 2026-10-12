@@ -1,10 +1,11 @@
 // js/settings.js
-(async function () {
+(function () {
   const db = window.Skillme2DB;
   const auth = window.Skillme2.auth;
   const h = window.Skillme2.helpers;
   const C = window.Skillme2.CONSTANTS;
   const toast = window.Skillme2.toast;
+  const storage = window.Skillme2.storage;
 
   let session = null;
   let interests = [];
@@ -89,16 +90,54 @@
     }
   });
 
+  // ---------- Profile actions (including image upload) ----------
   function wireProfileActions() {
+    // Remove avatar
     document.getElementById("avatar-remove-btn").addEventListener("click", () => {
       document.getElementById("settings-avatar").src = `https://i.pravatar.cc/160?u=${session.id}`;
       document.getElementById("settings-avatar-url").value = "";
     });
 
-    document.getElementById("avatar-upload-btn").addEventListener("click", () => {
-      toast("Upload coming soon — paste a URL below for now.");
+    // Upload avatar — real file picker + Supabase Storage upload
+    document.getElementById("avatar-upload-btn").addEventListener("click", async () => {
+      const btn = document.getElementById("avatar-upload-btn");
+      const original = btn.textContent;
+
+      try {
+        const file = await storage.pickFile({ accept: "image/*" });
+        btn.disabled = true;
+        btn.textContent = "Uploading…";
+
+        const { publicUrl } = await storage.uploadFile("avatars", file, {
+          maxSizeMB: 2,
+          prefix: "avatar-",
+        });
+
+        // Update the profile row immediately
+        const { error } = await db
+          .from("profiles")
+          .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
+          .eq("id", session.id);
+
+        if (error) throw error;
+
+        // Update the UI
+        document.getElementById("settings-avatar").src = publicUrl;
+        document.getElementById("settings-avatar-url").value = publicUrl;
+
+        auth.clearCache();
+        toast("Profile photo updated.");
+      } catch (err) {
+        if (err.message !== "No file selected") {
+          toast(err.message || "Could not upload photo.");
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = original;
+      }
     });
 
+    // Save profile
     document.getElementById("save-profile-btn").addEventListener("click", async () => {
       const btn = document.getElementById("save-profile-btn");
       btn.disabled = true;
@@ -139,7 +178,6 @@
   }
 
   function wireNotificationActions() {
-    // Load saved preferences from localStorage (until a prefs table is added)
     let prefs = {};
     try { prefs = JSON.parse(localStorage.getItem("skillme2_notif_prefs") || "{}"); } catch {}
 
@@ -162,12 +200,10 @@
 
     document.getElementById("tab-teacher").hidden = false;
 
-    // Payout method
     const pm = session.payout_method || {};
     document.getElementById("payout-method").value = pm.method || "mobile_money";
     document.getElementById("payout-detail").value = pm.detail || "";
 
-    // Verification status
     const statusEl = document.getElementById("verification-status");
     statusEl.textContent = session.verification === "verified" ? "Verified"
       : session.verification === "pending" ? "Pending review"
@@ -180,7 +216,6 @@
       : "pending"
     }`;
 
-    // Discount curve
     const curve = Array.isArray(session.group_discount_curve) ? session.group_discount_curve : [];
     renderCurve(curve);
   }

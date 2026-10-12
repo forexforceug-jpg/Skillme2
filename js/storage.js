@@ -3,7 +3,7 @@
   const db = window.Skillme2DB;
 
   // Upload a file to a bucket under the user's own folder.
-  // Returns the public URL.
+  // Returns { path, publicUrl }.
   async function uploadFile(bucket, file, { maxSizeMB = 5, prefix = "" } = {}) {
     if (!db) throw new Error("Storage not ready");
 
