@@ -4,6 +4,9 @@
   const auth = window.Skillme2.auth;
   const h = window.Skillme2.helpers;
 
+  // ---------------------------------------------------------------------------
+  // TOPBAR USER (signed-in area: wallet chip, bell, avatar / or Sign In buttons)
+  // ---------------------------------------------------------------------------
   async function renderTopbarUser() {
     const slot = document.querySelector("[data-user-slot]");
     if (!slot) return;
@@ -26,7 +29,8 @@
     slot.innerHTML = `
       <a href="${p}wallet.html" class="wallet-chip" title="Your wallet">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>
+          <rect x="2" y="5" width="20" height="14" rx="2"/>
+          <path d="M2 10h20"/>
         </svg>
         $${balance}
       </a>
@@ -49,9 +53,13 @@
     startNotificationPolling();
   }
 
+  // ---------------------------------------------------------------------------
+  // PROFILE DROPDOWN
+  // ---------------------------------------------------------------------------
   function wireProfileDropdown(session, p) {
     const slot = document.querySelector("[data-user-slot]");
     const avatarBtn = slot.querySelector("[data-avatar-trigger]");
+    if (!avatarBtn) return;
     let dropdownEl = null;
 
     function closeDropdown() {
@@ -69,8 +77,8 @@
         <div class="profile-dropdown__head">
           <img class="profile-dropdown__avatar" src="${session.avatar_url || `https://i.pravatar.cc/100?u=${session.id}`}" alt="">
           <div>
-            <div class="profile-dropdown__name">${session.name || "User"}</div>
-            <div class="profile-dropdown__email">${session.email || ""}</div>
+            <div class="profile-dropdown__name">${h.escapeHtml(session.name || "User")}</div>
+            <div class="profile-dropdown__email">${h.escapeHtml(session.email || "")}</div>
           </div>
         </div>
         <div class="profile-dropdown__divider"></div>
@@ -118,9 +126,13 @@
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // NOTIFICATIONS BELL
+  // ---------------------------------------------------------------------------
   function wireBell() {
     const bell = document.getElementById("topbar-bell");
-    if (!bell) return;
+    if (!bell || bell.dataset.wired) return;
+    bell.dataset.wired = "true";
     bell.addEventListener("click", () => openNotificationsDropdown(bell));
   }
 
@@ -145,8 +157,8 @@
       <div class="notif-dropdown__list">
         ${(notes || []).length ? notes.map(n => `
           <a href="${n.link || "#"}" class="notif-item ${n.read_at ? "" : "is-unread"}" data-id="${n.id}">
-            <div class="notif-item__title">${n.title || "Notification"}</div>
-            <div class="notif-item__body">${n.body || ""}</div>
+            <div class="notif-item__title">${h.escapeHtml(n.title || "Notification")}</div>
+            <div class="notif-item__body">${h.escapeHtml(n.body || "")}</div>
             <div class="notif-item__time">${h.relativeTime(n.created_at)}</div>
           </a>
         `).join("") : `<div class="notif-dropdown__empty">No notifications yet.</div>`}
@@ -161,7 +173,8 @@
     el.querySelector("#mark-all-read")?.addEventListener("click", async () => {
       await window.Skillme2.api.markAllNotificationsRead();
       el.querySelectorAll(".is-unread").forEach(i => i.classList.remove("is-unread"));
-      document.getElementById("topbar-bell-dot").hidden = true;
+      const dot = document.getElementById("topbar-bell-dot");
+      if (dot) dot.hidden = true;
     });
 
     el.querySelectorAll(".notif-item").forEach(item => {
@@ -195,12 +208,83 @@
 
   function startNotificationPolling() {
     checkUnreadCount();
-    setInterval(checkUnreadCount, 30000);
+    if (window.__skillme2NotifPoller) return;
+    window.__skillme2NotifPoller = setInterval(checkUnreadCount, 30000);
   }
 
+  // ---------------------------------------------------------------------------
+  // MOBILE SEARCH TOGGLE
+  // ---------------------------------------------------------------------------
+  function wireMobileSearch() {
+    const topbar = document.querySelector(".topbar");
+    const btn = document.getElementById("topbar-search-toggle");
+    const input = document.getElementById("feed-search");
+    if (!topbar || !btn || btn.dataset.wired) return;
+    btn.dataset.wired = "true";
+
+    btn.addEventListener("click", () => {
+      const isSearching = topbar.classList.toggle("is-searching");
+      if (isSearching) {
+        setTimeout(() => input?.focus(), 60);
+      } else if (input) {
+        input.value = "";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && topbar.classList.contains("is-searching")) {
+        topbar.classList.remove("is-searching");
+        if (input) {
+          input.value = "";
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }
+    });
+
+    // Close when clicking outside the topbar
+    document.addEventListener("click", (e) => {
+      if (!topbar.classList.contains("is-searching")) return;
+      if (topbar.contains(e.target)) return;
+      topbar.classList.remove("is-searching");
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // WORDMARK COLORING
+  // The "2" in "Skillme2" is rendered in the brand green #17C78C.
+  // Everything else is white. Applied on every page load.
+  // ---------------------------------------------------------------------------
+  function paintWordmark() {
+    document.querySelectorAll(".topbar__wordmark").forEach(el => {
+      // Skip if already painted
+      if (el.dataset.painted === "true") return;
+      el.dataset.painted = "true";
+
+      const text = el.textContent.trim() || "Skillme2";
+      const match = text.match(/^(.*?)(2)(.*)$/);
+
+      if (match) {
+        el.innerHTML = `${h.escapeHtml(match[1])}<span style="color:#17C78C">${match[2]}</span>${h.escapeHtml(match[3])}`;
+      } else {
+        el.textContent = text;
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // EXPORT + INIT
+  // ---------------------------------------------------------------------------
   window.Skillme2 = window.Skillme2 || {};
   window.Skillme2.topbar = { renderTopbarUser };
 
-  if (document.readyState !== "loading") renderTopbarUser();
-  else document.addEventListener("DOMContentLoaded", renderTopbarUser);
+  function init() {
+    renderTopbarUser();
+    wireMobileSearch();
+    paintWordmark();
+  }
+
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
 })();
