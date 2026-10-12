@@ -310,15 +310,17 @@
 
         if (role === "mentor") {
           const { error: mentorError } = await db.from("mentor_profiles").insert({
-            profile_id: userId,
-            specialty: data.specialty.trim(),
-            experience_years: parseInt(data.years, 10),
-            rate: parseFloat(data.rate),
-            verified: false,
-            rating: 0,
-            review_count: 0,
-            lesson_count: 0,
-          });
+  profile_id: userId,
+  specialty: data.specialty.trim(),
+  experience_years: parseInt(data.years, 10),
+  rate: parseFloat(data.rate),
+  tags: [],
+  quote: "",
+  verification: "unverified",
+  rating: 0,
+  review_count: 0,
+  lesson_count: 0,
+});
           if (mentorError) throw mentorError;
         }
 
