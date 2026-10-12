@@ -308,21 +308,42 @@
           await db.from("profiles").update({ interest: data.interest }).eq("id", userId);
         }
 
-        if (role === "mentor") {
-          const { error: mentorError } = await db.from("mentor_profiles").insert({
-  profile_id: userId,
-  specialty: data.specialty.trim(),
-  experience_years: parseInt(data.years, 10),
-  rate: parseFloat(data.rate),
-  tags: [],
-  quote: "",
-  verification: "unverified",
-  rating: 0,
-  review_count: 0,
-  lesson_count: 0,
-});
-          if (mentorError) throw mentorError;
-        }
+      if (role === "mentor") {
+  // Wait for the trigger to create the profile row
+  let profileExists = false;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const { data: check } = await db
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+    if (check) {
+      profileExists = true;
+      break;
+    }
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  if (!profileExists) {
+    throw new Error(
+      "Account created, but profile setup is still running. Please refresh in a moment and sign in."
+    );
+  }
+
+  const { error: mentorError } = await db.from("mentor_profiles").insert({
+    profile_id: userId,
+    specialty: data.specialty.trim(),
+    experience_years: parseInt(data.years, 10),
+    rate: parseFloat(data.rate),
+    tags: [],
+    quote: "",
+    verification: "unverified",
+    rating: 0,
+    review_count: 0,
+    lesson_count: 0,
+  });
+  if (mentorError) throw mentorError;
+}
 
         // Ensure we have a session
         const { data: { session } } = await db.auth.getSession();
