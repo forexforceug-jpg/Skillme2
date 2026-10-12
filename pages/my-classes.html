@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Classes — Skillme2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/feed.css">
+  <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/lesson-card.css">
+  <link rel="stylesheet" href="../css/my-classes.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="feed">
+
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="topbar__menu" aria-label="Toggle sidebar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="topbar__logo">
+        <img src="../assets/logo/logo.png" alt="Skillme2">
+      </a>
+    </div>
+    <div class="topbar__center"></div>
+    <div class="topbar__right" data-user-slot></div>
+  </header>
+
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <span class="eyebrow">My Classes</span>
+          <h1 class="page-title" id="mc-title">Loading…</h1>
+          <p class="page-desc" id="mc-desc">Manage your lessons and teaching.</p>
+        </div>
+        <div class="mc-head-actions">
+          <button class="btn btn--navy" id="create-new-btn">
+            + Create new
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="create-dropdown" id="create-dropdown" hidden>
+            <a href="lesson-create.html">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <div>
+                <strong>Create Lesson</strong>
+                <span>Publish a single bookable lesson</span>
+              </div>
+            </a>
+            <a href="course-create.html">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              <div>
+                <strong>Create Course</strong>
+                <span>Group lessons into a course</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="tabs" role="tablist" id="mc-tabs">
+        <button class="tabs__item is-active" data-tab="taking">Taking</button>
+        <button class="tabs__item" data-tab="teaching">Teaching</button>
+        <button class="tabs__item" data-tab="courses">Courses</button>
+      </nav>
+
+      <section class="tab-panel is-active" data-panel="taking">
+        <nav class="subtabs" id="taking-subtabs">
+          <button class="subtabs__item is-active" data-sub="upcoming">Upcoming</button>
+          <button class="subtabs__item" data-sub="past">Past</button>
+          <button class="subtabs__item" data-sub="cancelled">Cancelled</button>
+        </nav>
+        <div class="dash-list" id="taking-list"></div>
+      </section>
+
+      <section class="tab-panel" data-panel="teaching">
+        <nav class="subtabs" id="teaching-subtabs">
+          <button class="subtabs__item is-active" data-sub="requests">Requests</button>
+          <button class="subtabs__item" data-sub="upcoming">Upcoming</button>
+          <button class="subtabs__item" data-sub="past">Past</button>
+          <button class="subtabs__item" data-sub="my-lessons">My Lessons</button>
+          <button class="subtabs__item" data-sub="availability">Availability</button>
+        </nav>
+        <div id="teaching-content"></div>
+      </section>
+
+      <section class="tab-panel" data-panel="courses">
+        <div id="courses-content"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/constants.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase-mutations.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/topbar.js"></script>
+  <script src="../js/sidebar.js"></script>
+  <script src="../js/booking-modal.js"></script>
+  <script src="../js/my-classes.js"></script>
+</body>
+</html>

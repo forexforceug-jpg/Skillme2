@@ -1,0 +1,119 @@
+/* ============================================
+   SKILLME2 — LESSON CREATION WIZARD
+   ============================================ */
+
+.wizard {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1rem 0 4rem;
+}
+
+.wizard__head {
+  margin-bottom: 2rem;
+}
+.wizard__head h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin: 0.85rem 0 0.35rem;
+}
+
+/* ---------- STEP INDICATOR ---------- */
+.wizard__steps {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--surface-line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.wizard__steps::-webkit-scrollbar { display: none; }
+
+.wizard__step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.25rem 0.85rem 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  position: relative;
+}
+.wizard__step span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line-strong);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.wizard__step.is-active {
+  color: var(--gold);
+  font-weight: 600;
+}
+.wizard__step.is-active span {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy-950);
+}
+
+/* ---------- PANEL ---------- */
+.wizard__panel {
+  display: none;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.wizard__panel.is-active {
+  display: flex;
+}
+
+.wizard__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  .wizard__row { grid-template-columns: 1fr; }
+}
+
+/* ---------- NAV ---------- */
+.wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--surface-line);
+}
+
+.wizard__final-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.wizard__final-actions .btn {
+  flex: 1;
+  min-width: 160px;
+  justify-content: center;
+}
+
+/* ---------- DISCOUNT ROWS ---------- */
+.discount-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+.discount-row .btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1;
+}

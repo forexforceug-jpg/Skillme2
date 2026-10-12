@@ -1,0 +1,126 @@
+/* ============================================
+   SKILLME2 — WALLET
+   ============================================ */
+
+.wallet-balances {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 900px) {
+  .wallet-balances { grid-template-columns: 1fr; }
+}
+
+.wallet-balance {
+  padding: 1.5rem 1.75rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.wallet-balance--primary {
+  background: linear-gradient(135deg, rgba(201, 162, 74, 0.08), var(--navy-850));
+  border-color: rgba(201, 162, 74, 0.35);
+}
+.wallet-balance__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.wallet-balance__value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  font-feature-settings: "tnum";
+  line-height: 1;
+}
+.wallet-balance--primary .wallet-balance__value { color: var(--gold); }
+.wallet-balance__hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ---------- ACTIONS ---------- */
+.wallet-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.wallet-actions .btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+/* ---------- TRANSACTION LIST ---------- */
+.pay-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.05rem 1.35rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  flex-wrap: wrap;
+}
+.pay-row:hover { border-color: rgba(201, 162, 74, 0.3); }
+
+.pay-row__main { flex: 1; min-width: 200px; }
+.pay-row__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.pay-row__meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+}
+
+.pay-row__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  text-align: right;
+}
+.pay-row__amount {
+  font-size: 1rem;
+  font-weight: 700;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.01em;
+}
+.pay-row__amount.is-pos { color: var(--accent-green); }
+.pay-row__amount.is-neg { color: #FCA5A5; }
+.pay-row__note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+}
+
+@media (max-width: 640px) {
+  .pay-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .pay-row__status {
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+}

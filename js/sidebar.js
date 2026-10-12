@@ -1,69 +1,64 @@
 // js/sidebar.js
-// Handles the collapsible sidebar group and loads the student's enrolled mentors.
-
 (function () {
-  // ---------- Collapsible group ----------
-  const group = document.querySelector('.sidebar__group[data-group="mentors"]');
-  const toggle = group?.querySelector(".sidebar__group-toggle");
+  const mount = document.getElementById("sidebar");
+  if (!mount) return;
 
-  if (group && toggle) {
-    toggle.addEventListener("click", () => {
-      const isOpen = group.dataset.open === "true";
-      group.dataset.open = isOpen ? "false" : "true";
-      toggle.setAttribute("aria-expanded", String(!isOpen));
+  const inPages = window.location.pathname.includes("/pages/");
+  const prefix = inPages ? "" : "pages/";
+  const home = inPages ? "../index.html" : "index.html";
+  const path = window.location.pathname;
+  const isActive = slug => path.includes(slug) ? "is-active" : "";
+
+  mount.innerHTML = `
+    <nav class="sidebar__nav">
+      <a href="${home}" class="sidebar__item ${isActive("index") ? "is-active" : ""}" data-label="Home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="${prefix}inbox.html" class="sidebar__item ${isActive("inbox")}" data-label="Inbox">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+        <span>Inbox</span>
+      </a>
+      <a href="${prefix}wallet.html" class="sidebar__item ${isActive("wallet")}" data-label="Wallet">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        <span>Wallet</span>
+      </a>
+      <a href="${prefix}my-classes.html" class="sidebar__item ${isActive("my-classes")}" data-label="My Classes">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M8 6V2M16 6V2"/></svg>
+        <span>My Classes</span>
+      </a>
+    </nav>
+    <div class="sidebar__divider"></div>
+    <nav class="sidebar__nav">
+      <a href="${prefix}settings.html" class="sidebar__item ${isActive("settings")}" data-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </a>
+      <a href="${prefix}terms.html" class="sidebar__item ${isActive("terms")}" data-label="Terms">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>Terms</span>
+      </a>
+      <a href="${prefix}privacy.html" class="sidebar__item ${isActive("privacy")}" data-label="Privacy">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Privacy</span>
+      </a>
+    </nav>
+  `;
+
+  // Menu toggle (guarded)
+  const menuBtn = document.querySelector(".topbar__menu");
+  const appRoot = document.getElementById("app");
+  if (menuBtn && appRoot && !menuBtn.dataset.wired) {
+    menuBtn.dataset.wired = "true";
+    menuBtn.addEventListener("click", () => {
+      const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+      if (isMobile) appRoot.classList.toggle("is-sidebar-open");
+      else appRoot.classList.toggle("is-sidebar-collapsed");
+    });
+    appRoot.addEventListener("click", e => {
+      if (e.target === appRoot && appRoot.classList.contains("is-sidebar-open")) {
+        appRoot.classList.remove("is-sidebar-open");
+      }
     });
   }
-
-  // ---------- Load enrolled mentors ----------
-  const list = document.getElementById("my-mentors-list");
-  if (!list) return;
-
-  async function loadMyMentors() {
-    const db = window.Skillme2DB;
-    if (!db) return;
-
-    const session = await window.Skillme2Auth.getSession();
-    if (!session || session.role !== "student") {
-      list.innerHTML = `<div class="sidebar__empty">Sign in as a student to see your mentors.</div>`;
-      return;
-    }
-
-    const { data, error } = await db
-      .from("bookings")
-      .select(`
-        mentor_id,
-        mentors (id, name, photo)
-      `)
-      .eq("student_id", session.id);
-
-    if (error || !data || !data.length) {
-      list.innerHTML = `<div class="sidebar__empty">No mentors yet. Book a lesson to add one.</div>`;
-      return;
-    }
-
-    // Deduplicate by mentor_id
-    const seen = new Set();
-    const unique = data
-      .map(b => b.mentors)
-      .filter(m => m && !seen.has(m.id) && seen.add(m.id));
-
-    if (!unique.length) {
-      list.innerHTML = `<div class="sidebar__empty">No mentors yet. Book a lesson to add one.</div>`;
-      return;
-    }
-
-    list.innerHTML = unique.map(m => `
-      <a href="dashboard-student.html?mentor=${m.id}" class="sidebar__mentor-item">
-        <img
-          class="sidebar__mentor-avatar"
-          src="${m.photo || `https://i.pravatar.cc/100?u=${m.id}`}"
-          alt=""
-          onerror="this.src='https://i.pravatar.cc/100?u=${m.id}'"
-        >
-        <span>${m.name}</span>
-      </a>
-    `).join("");
-  }
-
-  document.addEventListener("DOMContentLoaded", loadMyMentors);
 })();

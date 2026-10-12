@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skillme2 — Learn Financial Markets from Real Traders</title>
-  <meta name="description" content="Book live 1:1 lessons with verified trader-mentors, read strategy articles, and learn financial markets on your own terms.">
+  <title>Skillme2 — Learn anything. Teach anything.</title>
+  <meta name="description" content="Book live 1:1 and group lessons with teachers who actually do it. Learn anything. Pay per lesson.">
   <meta name="theme-color" content="#061019">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/feed.css">
+  <link rel="stylesheet" href="css/lesson-card.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body class="feed">
 
-  <!-- ============ TOP BAR ============ -->
   <header class="topbar">
     <div class="topbar__left">
       <button class="topbar__menu" aria-label="Toggle sidebar">
@@ -36,89 +36,35 @@
           <circle cx="11" cy="11" r="8"/>
           <path d="m21 21-4.35-4.35"/>
         </svg>
-        <input
-          type="text"
-          id="feed-search"
-          placeholder="Search mentors, strategies, instruments, articles…"
-          autocomplete="off"
-        >
+        <input type="text" id="feed-search" placeholder="Search lessons, teachers, or subjects…" autocomplete="off">
       </div>
     </div>
 
-    <div class="topbar__right" data-user-slot>
-      <!-- Rendered by modals.js -->
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
-  <!-- ============ LAYOUT ============ -->
   <div class="app" id="app">
-
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
-
       <div class="chips-wrap">
-        <div class="chips" role="group" aria-label="Content filters">
-          <button class="chip is-active" data-filter="all">All</button>
-          <button class="chip" data-filter="mentors">Mentors</button>
-          <button class="chip" data-filter="articles">Articles</button>
-          <button class="chip" data-filter="strategies">Strategies</button>
-          <button class="chip" data-filter="psychology">Psychology</button>
-          <button class="chip" data-filter="crypto">Crypto</button>
-          <button class="chip" data-filter="forex">Forex</button>
-          <button class="chip" data-filter="indices">Indices</button>
-          <button class="chip" data-filter="risk">Risk</button>
-        </div>
+        <div class="chips" role="group" aria-label="Categories"></div>
       </div>
-
       <div class="feed-grid" id="feed-grid"></div>
-
     </main>
-
   </div>
 
-  <!-- ============ FOOTER ============ -->
-  <footer class="footer footer--slim">
-    <div class="container footer__inner">
-      <div class="footer__brand">
-        <img src="assets/logo/logo.png" alt="Skillme2">
-        <p>Learn financial markets from real traders.</p>
-      </div>
-
-      <div class="footer__col">
-        <h5>Platform</h5>
-        <a href="index.html">Browse Mentors</a>
-        <a href="pages/dashboard-student.html">Classes</a>
-        <a href="pages/payments.html">Payments</a>
-      </div>
-
-      <div class="footer__col">
-        <h5>Mentors</h5>
-        <a href="#" data-action="apply">Apply to Teach</a>
-        <a href="pages/terms.html">Guidelines</a>
-        <a href="pages/payments.html">Payouts</a>
-      </div>
-
-      <div class="footer__col">
-        <h5>Legal</h5>
-        <a href="pages/terms.html">Terms</a>
-        <a href="pages/privacy.html">Privacy</a>
-        <a href="pages/terms.html">Refunds</a>
-      </div>
-
-      <div class="footer__col">
-        <h5>Contact</h5>
-        <a href="mailto:support@skillme2.com">support@skillme2.com</a>
-        <p>© 2026 Skillme2.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ============ SCRIPTS ============ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/supabase-mutations.js"></script>
   <script src="js/modals.js"></script>
+  <script src="js/topbar.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/lesson-modal.js"></script>
+  <script src="js/booking-modal.js"></script>
   <script src="js/feed.js"></script>
-  <script src="js/sidebar-shared.js"></script>
 </body>
 </html>

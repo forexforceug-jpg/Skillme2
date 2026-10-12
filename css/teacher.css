@@ -1,0 +1,111 @@
+/* ============================================
+   SKILLME2 — TEACHER PROFILE
+   ============================================ */
+
+.teacher-hero {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--navy-850) 0%, var(--navy-900) 100%);
+  border: 1px solid var(--surface-line);
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.teacher-hero__avatar {
+  flex-shrink: 0;
+}
+.teacher-hero__avatar img {
+  width: 140px;
+  height: 140px;
+  border-radius: 20px;
+  object-fit: cover;
+  border: 2px solid var(--surface-line-strong);
+  background: var(--navy-800);
+}
+
+.teacher-hero__info {
+  flex: 1;
+  min-width: 260px;
+}
+
+.teacher-hero__info h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.6rem;
+}
+
+.teacher-hero__bio {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+  max-width: 60ch;
+}
+
+.teacher-hero__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  .teacher-hero__stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.teacher-hero__stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.teacher-hero__stats strong {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.teacher-hero__stats span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
+/* ---------- LESSONS SECTION ---------- */
+.page-section {
+  margin-bottom: 3rem;
+}
+.page-section .table-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 720px) {
+  .teacher-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+  }
+  .teacher-hero__info h1 { font-size: 1.6rem; }
+  .teacher-hero__avatar img {
+    width: 110px;
+    height: 110px;
+  }
+  .teacher-hero__stats {
+    text-align: center;
+    width: 100%;
+  }
+  .teacher-hero__stats > div {
+    align-items: center;
+  }
+}
