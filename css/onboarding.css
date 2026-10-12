@@ -1,0 +1,149 @@
+/* ============================================
+   SKILLME2 — ONBOARDING
+   ============================================ */
+
+.onboarding-body {
+  background: var(--navy-950);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.onboarding-wrap {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.onboarding-logo img {
+  height: 32px;
+  width: auto;
+  filter: brightness(0) invert(1);
+}
+
+.onboarding-card {
+  width: 100%;
+  background: var(--navy-850);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 16px;
+  padding: 2.5rem 2.25rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- LOADING ---------- */
+.onboarding-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--surface-panel) 25%,
+    var(--surface-panel-hover) 50%,
+    var(--surface-panel) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+  height: 16px;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---------- HEADER ---------- */
+.onboarding-header {
+  margin-bottom: 2rem;
+}
+.onboarding-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  margin: 0.6rem 0 0.6rem;
+  line-height: 1.15;
+}
+.onboarding-sub {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ---------- FORM ---------- */
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.onboarding-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.onboarding-field > span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.onboarding-field > span em {
+  font-style: normal;
+  color: var(--text-dim);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.onboarding-field input,
+.onboarding-field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.onboarding-field input:focus,
+.onboarding-field textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 74, 0.12);
+}
+.onboarding-field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.onboarding-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  font-feature-settings: "tnum";
+}
+
+/* ---------- FOOTER ---------- */
+.onboarding-foot {
+  margin-top: 1.5rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+.onboarding-foot a {
+  color: var(--gold);
+  font-weight: 600;
+}
+.onboarding-foot a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  .onboarding-card { padding: 2rem 1.5rem; }
+  .onboarding-header h1 { font-size: 1.5rem; }
+}

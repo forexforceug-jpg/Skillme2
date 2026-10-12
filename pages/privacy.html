@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service â€” Skillme2</title>
+  <title>Privacy Policy — Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/feed.css">
   <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/legal.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
 <body class="feed">
@@ -28,52 +29,165 @@
       </a>
     </div>
     <div class="topbar__center"></div>
-    <div class="topbar__right">
-      <button class="btn btn--navy" data-action="session">Sign In</button>
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
   <div class="app" id="app">
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
-      <div class="legal-doc">
-        <span class="eyebrow">Legal</span>
-        <h1>Privacy Policy</h1>
-        <p class="legal-doc__updated">Last updated: October 2026</p>
+      <article class="legal-page">
 
-        <h2>1. Acceptance of Terms</h2>
-        <p>By accessing or using Skillme2, you agree to be bound by these Terms of Service. If you do not agree, do not use the platform.</p>
+        <div class="legal-page__head">
+          <span class="eyebrow">Legal</span>
+          <h1>Privacy Policy</h1>
+          <p class="legal-page__updated">Last updated: October 12, 2026</p>
+        </div>
 
-        <h2>2. The Platform</h2>
-        <p>Skillme2 is a marketplace connecting students with independent trader-mentors for live one-on-one lessons. Skillme2 does not provide trading advice and is not a broker, financial advisor, or investment manager.</p>
+        <p class="legal-page__intro">
+          This Privacy Policy explains what information Skillme2 collects, how we use
+          it, and the choices you have. Our goal is to collect only what we need to
+          run the Platform, and to be transparent about it.
+        </p>
 
-        <h2>3. Mentor Responsibilities</h2>
-        <p>Mentors are independent contractors. They are responsible for the accuracy of their profile, the delivery of booked lessons, and compliance with all applicable laws in their jurisdiction. Mentors must not guarantee profits or make misleading claims about trading outcomes.</p>
+        <nav class="legal-page__toc">
+          <h3>On this page</h3>
+          <ol>
+            <li><a href="#info">1. Information we collect</a></li>
+            <li><a href="#use">2. How we use information</a></li>
+            <li><a href="#share">3. When we share information</a></li>
+            <li><a href="#cookies">4. Cookies and similar</a></li>
+            <li><a href="#storage">5. Data storage and security</a></li>
+            <li><a href="#rights">6. Your rights</a></li>
+            <li><a href="#children">7. Children</a></li>
+            <li><a href="#changes">8. Changes to this policy</a></li>
+          </ol>
+        </nav>
 
-        <h2>4. Student Responsibilities</h2>
-        <p>Students are responsible for attending booked lessons, respecting mentors, and understanding that trading involves substantial risk of loss. Nothing taught on Skillme2 constitutes financial advice.</p>
+        <section class="legal-page__section" id="info">
+          <h2>1. Information we collect</h2>
+          <p>We collect the following categories of information:</p>
+          <ul>
+            <li><strong>Account information:</strong> name, email, password hash (if you sign up with email), or Google user ID (if you sign in with Google).</li>
+            <li><strong>Profile information:</strong> bio, avatar image URL, timezone, language, interests, and — if you become a teacher — specialty, rate, and payout method.</li>
+            <li><strong>Lesson data:</strong> lessons you publish, bookings you make, sessions you complete.</li>
+            <li><strong>Payment data:</strong> wallet balance, transaction history, and payout method details. We do not store full card numbers — payments are handled by our payment processors.</li>
+            <li><strong>Messages:</strong> messages you send and receive on Skillme2.</li>
+            <li><strong>Usage data:</strong> IP address, browser type, pages visited, and similar technical information collected by our hosting and analytics providers.</li>
+          </ul>
+        </section>
 
-        <h2>5. Payments</h2>
-        <p>All lesson payments are processed through our payment partner. Skillme2 holds funds in escrow until a lesson is completed, then releases the mentor's share minus platform commission. Refunds are handled per our Refund Policy.</p>
+        <section class="legal-page__section" id="use">
+          <h2>2. How we use information</h2>
+          <p>We use the information we collect to:</p>
+          <ul>
+            <li>Create and manage your account</li>
+            <li>Display your profile and lessons to other users</li>
+            <li>Process bookings, payments, and refunds</li>
+            <li>Send transactional emails — booking confirmations, reminders, receipts, and important account notices</li>
+            <li>Detect and prevent fraud, abuse, and violations of our Terms</li>
+            <li>Improve the Platform's features and user experience</li>
+            <li>Comply with legal obligations</li>
+          </ul>
+          <p>
+            We do not sell your personal information. We do not run ads targeted at you
+            based on your profile or messages.
+          </p>
+        </section>
 
-        <h2>6. Prohibited Conduct</h2>
-        <p>Users must not use Skillme2 to promote unlicensed financial services, solicit investments, share pirated material, or engage in harassment. Violations may result in account termination.</p>
+        <section class="legal-page__section" id="share">
+          <h2>3. When we share information</h2>
+          <p>We share information only in these cases:</p>
+          <ul>
+            <li><strong>Between student and teacher:</strong> when you book a lesson, the teacher sees your name, avatar, and any pre-lesson notes you provide. When a teacher publishes a lesson, students see their name, avatar, and lesson details.</li>
+            <li><strong>Service providers:</strong> Supabase (database and authentication), Resend (transactional email), Zoom (live lesson video), and our payment processors. These providers only see what is needed to perform their function.</li>
+            <li><strong>Legal requirements:</strong> if required by law, subpoena, or a valid request from a government authority.</li>
+            <li><strong>Business transfers:</strong> if Skillme2 is acquired or merged, your information may transfer as part of that transaction.</li>
+          </ul>
+        </section>
 
-        <h2>7. Limitation of Liability</h2>
-        <p>Skillme2 is provided "as is." We are not liable for trading losses, missed lessons, or disputes between users. Our maximum liability is limited to the fees you have paid to Skillme2 in the previous 12 months.</p>
+        <section class="legal-page__section" id="cookies">
+          <h2>4. Cookies and similar technologies</h2>
+          <p>
+            We use cookies and browser storage to keep you signed in, remember your
+            preferences, and understand how the Platform is used. We do not use
+            third-party advertising cookies.
+          </p>
+          <p>
+            You can control cookies through your browser settings. Disabling cookies
+            may prevent you from staying signed in.
+          </p>
+        </section>
 
-        <h2>8. Changes</h2>
-        <p>We may update these terms. Continued use of Skillme2 after changes constitutes acceptance.</p>
+        <section class="legal-page__section" id="storage">
+          <h2>5. Data storage and security</h2>
+          <p>
+            Data is stored on Supabase infrastructure and transmitted over HTTPS. We
+            use industry-standard encryption in transit and at rest. Passwords are
+            hashed by Supabase Auth and never visible to us.
+          </p>
+          <p>
+            No system is completely secure. We cannot guarantee that your data will
+            never be compromised, but we work to protect it with reasonable technical
+            and organizational measures.
+          </p>
+        </section>
 
-        <h2>9. Contact</h2>
-        <p>Questions: <a href="mailto:support@skillme2.com">support@skillme2.com</a></p>
-      </div>
+        <section class="legal-page__section" id="rights">
+          <h2>6. Your rights</h2>
+          <p>You have the right to:</p>
+          <ul>
+            <li><strong>Access</strong> your personal data — request a copy in a portable format</li>
+            <li><strong>Correct</strong> inaccurate data — most of it you can edit directly in Settings</li>
+            <li><strong>Delete</strong> your account and personal data — request deletion at any time</li>
+            <li><strong>Object</strong> to certain processing — such as marketing emails</li>
+            <li><strong>Export</strong> your lesson history and wallet transactions</li>
+          </ul>
+          <p>
+            To exercise any of these rights, contact us at
+            <a href="mailto:support@skillme2.com">support@skillme2.com</a>. We aim to
+            respond within 30 days.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="children">
+          <h2>7. Children</h2>
+          <p>
+            Skillme2 is not intended for children under 13. If you are under 13, do
+            not create an account. If we learn that we have collected personal data
+            from a child under 13, we will delete it.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="changes">
+          <h2>8. Changes to this policy</h2>
+          <p>
+            We may update this Privacy Policy from time to time. When we do, we'll
+            update the "Last updated" date. If the changes are material, we'll notify
+            you by email or by a prominent notice on the Platform.
+          </p>
+        </section>
+
+        <div class="legal-page__contact">
+          <h3>Contact</h3>
+          <p>
+            For privacy questions or to exercise your rights, email
+            <a href="mailto:support@skillme2.com">support@skillme2.com</a>.
+          </p>
+        </div>
+
+      </article>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
-  <script src="../js/sidebar-shared.js"></script>
-  </body>
+  <script src="../js/constants.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase-mutations.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/topbar.js"></script>
+  <script src="../js/sidebar.js"></script>
+</body>
 </html>

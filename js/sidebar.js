@@ -45,16 +45,31 @@
     </nav>
   `;
 
-  // Menu toggle (guarded)
+  // Wire the topbar hamburger. Desktop → collapse to icons. Mobile → slide out.
   const menuBtn = document.querySelector(".topbar__menu");
   const appRoot = document.getElementById("app");
+
   if (menuBtn && appRoot && !menuBtn.dataset.wired) {
     menuBtn.dataset.wired = "true";
+
+    // Restore the collapsed state if the user had it set
+    if (localStorage.getItem("skillme2_sidebar_collapsed") === "true" && !window.matchMedia("(max-width: 1024px)").matches) {
+      appRoot.classList.add("is-collapsed");
+    }
+
     menuBtn.addEventListener("click", () => {
       const isMobile = window.matchMedia("(max-width: 1024px)").matches;
-      if (isMobile) appRoot.classList.toggle("is-sidebar-open");
-      else appRoot.classList.toggle("is-sidebar-collapsed");
+      if (isMobile) {
+        appRoot.classList.toggle("is-sidebar-open");
+      } else {
+        appRoot.classList.toggle("is-collapsed");
+        localStorage.setItem(
+          "skillme2_sidebar_collapsed",
+          String(appRoot.classList.contains("is-collapsed"))
+        );
+      }
     });
+
     appRoot.addEventListener("click", e => {
       if (e.target === appRoot && appRoot.classList.contains("is-sidebar-open")) {
         appRoot.classList.remove("is-sidebar-open");

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course — Skillme2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/feed.css">
+  <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/lesson-card.css">
+  <link rel="stylesheet" href="../css/course.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="feed">
+
+  <header class="topbar">
+    <div class="topbar__left">
+      <button class="topbar__menu" aria-label="Toggle sidebar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
+        </svg>
+      </button>
+      <a href="../index.html" class="topbar__logo">
+        <img src="../assets/logo/logo.png" alt="Skillme2">
+      </a>
+    </div>
+    <div class="topbar__center"></div>
+    <div class="topbar__right" data-user-slot></div>
+  </header>
+
+  <div class="app" id="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <main class="main">
+      <button class="back-btn" onclick="history.length>1?history.back():location.href='../index.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+
+      <section class="course-hero" id="course-hero">
+        <div class="course-hero__cover">
+          <img id="course-cover" src="" alt="">
+        </div>
+        <div class="course-hero__info">
+          <span class="eyebrow" id="course-category"></span>
+          <h1 id="course-title">Loading…</h1>
+          <p id="course-desc" class="course-hero__desc"></p>
+          <div class="course-hero__teacher">
+            <img id="course-teacher-avatar" src="" alt="">
+            <div>
+              <div class="course-hero__teacher-name" id="course-teacher-name">—</div>
+              <div class="course-hero__teacher-sub" id="course-teacher-sub">—</div>
+            </div>
+          </div>
+          <div class="course-hero__meta">
+            <span id="course-lesson-count">0 lessons</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <h2 class="table-title">Lessons in this course</h2>
+        <div class="course-lessons" id="course-lessons"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/constants.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase-mutations.js"></script>
+  <script src="../js/modals.js"></script>
+  <script src="../js/topbar.js"></script>
+  <script src="../js/sidebar.js"></script>
+  <script src="../js/lesson-modal.js"></script>
+  <script src="../js/course.js"></script>
+</body>
+</html>

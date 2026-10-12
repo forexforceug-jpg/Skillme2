@@ -36,204 +36,187 @@
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
-
       <div class="page-head">
         <div>
           <span class="eyebrow">Settings</span>
-          <h1 class="page-title">Settings</h1>
-          <p class="page-desc">Manage your profile, account, and preferences.</p>
+          <h1 class="page-title">Your account</h1>
+          <p class="page-desc">Profile, wallet, and teaching preferences.</p>
         </div>
       </div>
 
-      <nav class="tabs" role="tablist">
-        <button class="tabs__item is-active" data-tab="profile" role="tab">Profile</button>
-        <button class="tabs__item" data-tab="account" role="tab">Account</button>
-        <button class="tabs__item" data-tab="notifications" role="tab">Notifications</button>
-        <button class="tabs__item" data-tab="privacy" role="tab">Privacy</button>
+      <nav class="tabs" role="tablist" id="settings-tabs">
+        <button class="tabs__item is-active" data-tab="profile">Profile</button>
+        <button class="tabs__item" data-tab="account">Account</button>
+        <button class="tabs__item" data-tab="notifications">Notifications</button>
+        <button class="tabs__item" data-tab="teacher" id="tab-teacher" hidden>Teacher</button>
+        <button class="tabs__item" data-tab="danger">Danger zone</button>
       </nav>
 
       <!-- PROFILE -->
       <section class="tab-panel is-active" data-panel="profile">
         <div class="settings-form">
-
           <div class="settings-block">
-            <label class="settings-block__label">Profile Photo</label>
+            <label class="settings-block__label">Profile photo</label>
             <div class="avatar-upload">
-              <img src="https://i.pravatar.cc/160?u=you" alt="" id="settings-avatar">
+              <img src="" alt="" id="settings-avatar">
               <div class="avatar-upload__actions">
-                <button class="btn btn--ghost" type="button">Upload new</button>
-                <button class="btn btn--ghost" type="button">Remove</button>
-                <p class="avatar-upload__hint">JPG or PNG. Max 2MB.</p>
+                <button class="btn btn--ghost" type="button" id="avatar-upload-btn">Upload new</button>
+                <button class="btn btn--ghost" type="button" id="avatar-remove-btn">Remove</button>
+                <p class="avatar-upload__hint">JPG or PNG. Max 2MB. Or paste a URL below.</p>
               </div>
             </div>
+            <input class="settings-input" type="url" id="settings-avatar-url"
+                   placeholder="https://... or leave blank" style="margin-top:0.5rem;">
           </div>
 
           <div class="settings-block">
-            <label class="settings-block__label">Display Name</label>
-            <input class="settings-input" type="text" id="settings-name" value="John Doe">
+            <label class="settings-block__label">Display name</label>
+            <input class="settings-input" type="text" id="settings-name" required>
           </div>
 
           <div class="settings-block">
             <label class="settings-block__label">Email</label>
-            <input class="settings-input" type="email" value="john@example.com" disabled>
-            <p class="settings-hint">Changing email requires confirmation.</p>
+            <input class="settings-input" type="email" id="settings-email" disabled>
+            <p class="settings-hint">Email cannot be changed here. Contact support.</p>
           </div>
 
           <div class="settings-block">
             <label class="settings-block__label">Bio</label>
-            <textarea class="settings-input" id="settings-bio" rows="4">I've been trading forex for 5 years, focusing on risk management and market structure.</textarea>
-            <p class="settings-hint">0 / 500 characters</p>
+            <textarea class="settings-input" id="settings-bio" rows="4" maxlength="300"></textarea>
+            <p class="settings-hint"><span id="bio-count">0</span> / 300 characters</p>
           </div>
 
-          <!-- Student-only -->
+          <div class="settings-row-2">
+            <div class="settings-block">
+              <label class="settings-block__label">Timezone</label>
+              <select class="settings-input" id="settings-timezone"></select>
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label">Language</label>
+              <input class="settings-input" type="text" id="settings-language" value="English">
+            </div>
+          </div>
+
           <div class="settings-block" data-role="student">
             <label class="settings-block__label">Interests</label>
-            <div class="chip-input">
-              <span class="chip-tag">Forex <button type="button" class="chip-tag__remove">×</button></span>
-              <span class="chip-tag">Crypto <button type="button" class="chip-tag__remove">×</button></span>
-              <span class="chip-tag">Risk Management <button type="button" class="chip-tag__remove">×</button></span>
-              <button type="button" class="chip-add">+ Add</button>
+            <div class="chip-input" id="interests-wrap"></div>
+            <div class="chip-add-wrap">
+              <input class="settings-input" type="text" id="interest-input" placeholder="Add an interest and press Enter">
             </div>
           </div>
 
-          <!-- Mentor-only -->
-          <div data-role="mentor" hidden>
-            <div class="settings-block">
-              <label class="settings-block__label">Specialty</label>
-              <input class="settings-input" type="text" value="Forex, Crypto">
-            </div>
-            <div class="settings-block">
-              <label class="settings-block__label">Years of experience</label>
-              <input class="settings-input" type="number" value="8" min="1">
-            </div>
-            <div class="settings-block">
-              <label class="settings-block__label">Rate per lesson (USD)</label>
-              <input class="settings-input" type="number" value="35" min="5" step="1">
-            </div>
-            <div class="settings-block">
-              <label class="settings-block__label">Tags</label>
-              <div class="chip-input">
-                <span class="chip-tag">Risk <button type="button" class="chip-tag__remove">×</button></span>
-                <span class="chip-tag">Price Action <button type="button" class="chip-tag__remove">×</button></span>
-                <button type="button" class="chip-add">+ Add</button>
-              </div>
-            </div>
-            <div class="settings-block">
-              <label class="settings-block__label">Quote</label>
-              <input class="settings-input" type="text" value="The market rewards patience, not prediction.">
-            </div>
-          </div>
-
-          <button class="btn btn--navy" data-action="save-profile">Save Changes</button>
-
+          <button class="btn btn--navy" id="save-profile-btn">Save changes</button>
         </div>
       </section>
 
       <!-- ACCOUNT -->
       <section class="tab-panel" data-panel="account">
-
         <div class="settings-card">
-          <div class="settings-card__head">
-            <h2>Password</h2>
-          </div>
+          <div class="settings-card__head"><h2>Password</h2></div>
           <div class="settings-card__body">
-            <button class="btn btn--ghost" data-action="change-password">Change password</button>
-            <p class="settings-hint" style="margin-top:0.75rem;">Last changed: 3 months ago</p>
+            <button class="btn btn--ghost" id="change-password-btn">Change password</button>
+            <p class="settings-hint" style="margin-top:0.75rem;">A password reset link will be sent to your email.</p>
           </div>
         </div>
 
         <div class="settings-card">
-          <div class="settings-card__head">
-            <h2>Sessions</h2>
-          </div>
+          <div class="settings-card__head"><h2>Session</h2></div>
           <div class="settings-card__body">
-            <div class="session-row">
-              <div>
-                <strong>📱 Chrome · Windows · Kampala</strong>
-                <span class="settings-hint">Current session · Active now</span>
-              </div>
-            </div>
-            <div class="session-row">
-              <div>
-                <strong>📱 Safari · iPhone · Kampala</strong>
-                <span class="settings-hint">Last active 2 days ago</span>
-              </div>
-              <button class="btn btn--ghost">Sign out</button>
-            </div>
-            <button class="btn btn--ghost" style="margin-top:1rem;" data-action="signout-all">Sign out all other sessions</button>
+            <p class="settings-hint">You are signed in as <strong id="session-email">—</strong>.</p>
+            <button class="btn btn--ghost" id="signout-here-btn" style="margin-top:1rem;">Sign out</button>
           </div>
         </div>
-
-        <div class="settings-card settings-card--danger">
-          <div class="settings-card__head">
-            <h2>Danger Zone</h2>
-          </div>
-          <div class="settings-card__body">
-            <p class="settings-hint">Deleting your account permanently removes your profile, bookings, and messages. This cannot be undone.</p>
-            <button class="btn btn--danger" data-action="delete-account">Delete account</button>
-          </div>
-        </div>
-
       </section>
 
       <!-- NOTIFICATIONS -->
       <section class="tab-panel" data-panel="notifications">
-
         <div class="settings-card">
-          <div class="settings-card__head">
-            <h2>Email Notifications</h2>
-          </div>
+          <div class="settings-card__head"><h2>Email notifications</h2></div>
           <div class="settings-card__body">
-            <label class="toggle"><input type="checkbox" checked><span>Booking confirmed</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Lesson reminder (24h before)</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>New message</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Payment received</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Payout sent</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>New review</span></label>
-            <label class="toggle"><input type="checkbox"><span>Weekly summary</span></label>
-            <label class="toggle"><input type="checkbox"><span>Product updates</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="booking_request" checked><span>Booking requests</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="booking_accepted" checked><span>Booking accepted</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="lesson_reminder" checked><span>Lesson reminders</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="lesson_complete" checked><span>Lesson completion prompts</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="payment_received" checked><span>Payments and payouts</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="review_received" checked><span>New reviews</span></label>
+            <label class="toggle"><input type="checkbox" data-notif="marketing"><span>Product updates and tips</span></label>
           </div>
         </div>
-
-        <div class="settings-card">
-          <div class="settings-card__head">
-            <h2>In-App Notifications</h2>
-          </div>
-          <div class="settings-card__body">
-            <label class="toggle"><input type="checkbox" checked><span>Booking requests</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>New messages</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Review received</span></label>
-          </div>
-        </div>
-
+        <button class="btn btn--navy" id="save-notifs-btn">Save notification preferences</button>
       </section>
 
-      <!-- PRIVACY -->
-      <section class="tab-panel" data-panel="privacy">
+      <!-- TEACHER -->
+      <section class="tab-panel" data-panel="teacher">
+        <div class="settings-card">
+          <div class="settings-card__head"><h2>Payout method</h2></div>
+          <div class="settings-card__body">
+            <p class="settings-hint" style="margin-bottom:1rem;">
+              Where should we send your earnings? You must set this up before you can accept bookings.
+            </p>
+            <div class="settings-row-2">
+              <div class="settings-block">
+                <label class="settings-block__label">Method</label>
+                <select class="settings-input" id="payout-method">
+                  <option value="mobile_money">Mobile Money</option>
+                  <option value="bank">Bank transfer</option>
+                  <option value="paypal">PayPal</option>
+                </select>
+              </div>
+              <div class="settings-block">
+                <label class="settings-block__label">Account detail</label>
+                <input class="settings-input" type="text" id="payout-detail" placeholder="Phone number, account, or email">
+              </div>
+            </div>
+            <button class="btn btn--navy" id="save-payout-btn" style="margin-top:1rem;">Save payout method</button>
+          </div>
+        </div>
 
         <div class="settings-card">
-          <div class="settings-card__head">
-            <h2>Profile Visibility</h2>
-          </div>
+          <div class="settings-card__head"><h2>Group discount curve</h2></div>
           <div class="settings-card__body">
-            <label class="toggle"><input type="checkbox" checked><span>Show my profile in search</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Show my lesson count</span></label>
-            <label class="toggle"><input type="checkbox" checked><span>Show my reviews</span></label>
-            <label class="toggle"><input type="checkbox"><span>Show my online status</span></label>
+            <p class="settings-hint" style="margin-bottom:1rem;">
+              When you run group lessons, the per-student price drops as more people join.
+              Set the discount percentages here.
+            </p>
+            <div id="curve-editor">
+              <div class="curve-head">
+                <span>Min seats</span>
+                <span>Discount %</span>
+                <span></span>
+              </div>
+              <div id="curve-rows"></div>
+              <button type="button" class="btn btn--ghost" id="add-curve-row" style="margin-top:0.5rem;">+ Add tier</button>
+            </div>
+            <button class="btn btn--navy" id="save-curve-btn" style="margin-top:1rem;">Save discount curve</button>
           </div>
         </div>
 
         <div class="settings-card">
           <div class="settings-card__head">
-            <h2>Your Data</h2>
+            <h2>Verification</h2>
+            <span class="status-pill status-pill--pending" id="verification-status">Unverified</span>
           </div>
           <div class="settings-card__body">
-            <button class="btn btn--ghost" data-action="download-data">Download my data</button>
-            <p class="settings-hint" style="margin-top:0.75rem;">Get a copy of your data as a JSON file.</p>
-            <a href="privacy.html" class="settings-link">View privacy policy →</a>
+            <p class="settings-hint" style="margin-bottom:1rem;">
+              Get the "Verified Teacher" badge and appear higher in search. Verification costs $10/month.
+            </p>
+            <button class="btn btn--navy" id="verify-btn">Submit verification</button>
           </div>
         </div>
+      </section>
 
+      <!-- DANGER ZONE -->
+      <section class="tab-panel" data-panel="danger">
+        <div class="settings-card settings-card--danger">
+          <div class="settings-card__head"><h2>Delete account</h2></div>
+          <div class="settings-card__body">
+            <p class="settings-hint" style="margin-bottom:1rem;">
+              This permanently removes your profile, lessons, bookings, and messages.
+              This cannot be undone.
+            </p>
+            <button class="btn btn--danger" id="delete-account-btn">Delete my account</button>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -241,8 +224,13 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
+  <script src="../js/constants.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase-mutations.js"></script>
   <script src="../js/modals.js"></script>
-  <script src="../js/sidebar-shared.js"></script>
-  <script src="../js/page-settings.js"></script>
+  <script src="../js/topbar.js"></script>
+  <script src="../js/sidebar.js"></script>
+  <script src="../js/settings.js"></script>
 </body>
 </html>

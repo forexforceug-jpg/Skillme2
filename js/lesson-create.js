@@ -7,22 +7,33 @@
   const toast = window.Skillme2.toast;
   const C = window.Skillme2.CONSTANTS;
 
+  let session = null;      // module-level so all functions can see it
   let currentStep = 1;
   let editingId = null;
 
   async function init() {
-    const session = await auth.requireAuth();
+    session = await auth.requireAuth();
     if (!session) return;
 
     editingId = new URLSearchParams(location.search).get("id");
 
-    // Populate selects
-    const { data: cats } = await db.from("categories").select("*").eq("is_active", true).order("display_order");
-    const catSel = document.getElementById("cat-select");
-    catSel.innerHTML = (cats || []).map(c => `<option value="${c.id}">${c.icon || ""} ${c.name}</option>`).join("");
+    // Categories
+    const { data: cats } = await db
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order");
 
+    const catSel = document.getElementById("cat-select");
+    catSel.innerHTML = (cats || [])
+      .map(c => `<option value="${c.id}">${c.icon || ""} ${c.name}</option>`)
+      .join("");
+
+    // Durations
     const durSel = document.getElementById("dur-select");
-    durSel.innerHTML = C.DURATIONS.map(d => `<option value="${d}" ${d === 60 ? "selected" : ""}>${d} minutes</option>`).join("");
+    durSel.innerHTML = C.DURATIONS
+      .map(d => `<option value="${d}" ${d === 60 ? "selected" : ""}>${d} minutes</option>`)
+      .join("");
 
     if (editingId) {
       document.getElementById("wiz-title").textContent = "Edit lesson";
@@ -35,7 +46,11 @@
   }
 
   async function loadExisting() {
-    const { data: lesson } = await db.from("lessons").select("*").eq("id", editingId).single();
+    const { data: lesson } = await db
+      .from("lessons")
+      .select("*")
+      .eq("id", editingId)
+      .single();
     if (!lesson) return;
 
     const form = document.getElementById("lesson-form");
@@ -59,8 +74,11 @@
       document.getElementById("group-fields").hidden = false;
     }
 
-    // Load discount curve
-    const { data: profile } = await db.from("profiles").select("group_discount_curve").eq("id", session.id).single();
+    const { data: profile } = await db
+      .from("profiles")
+      .select("group_discount_curve")
+      .eq("id", session.id)
+      .single();
     if (profile?.group_discount_curve?.length) {
       renderDiscountRows(profile.group_discount_curve);
     }
@@ -73,17 +91,25 @@
 
     function update() {
       document.querySelectorAll(".wizard__panel").forEach(p => p.classList.remove("is-active"));
-      document.querySelector(`[data-panel="${currentStep}"]`).classList.add("is-active");
+      const panel = document.querySelector(`[data-panel="${currentStep}"]`);
+      if (panel) panel.classList.add("is-active");
+
       document.querySelectorAll(".wizard__step").forEach(s => {
         s.classList.toggle("is-active", Number(s.dataset.step) === currentStep);
       });
+
       prev.disabled = currentStep === 1;
       next.hidden = currentStep === 5;
+
       if (currentStep === 5) renderPreview();
     }
 
-    prev.addEventListener("click", () => { if (currentStep > 1) { currentStep--; update(); } });
-    next.addEventListener("click", () => { if (currentStep < 5) { currentStep++; update(); } });
+    prev.addEventListener("click", () => {
+      if (currentStep > 1) { currentStep--; update(); }
+    });
+    next.addEventListener("click", () => {
+      if (currentStep < 5) { currentStep++; update(); }
+    });
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
@@ -146,7 +172,8 @@
       duration_minutes: parseInt(form.duration_minutes.value, 10),
       price: parseFloat(form.price.value),
       cover_url: form.cover_url.value.trim() || null,
-      what_youll_learn: form.what_youll_learn.value.split("\n").map(s => s.trim()).filter(Boolean),
+      what_youll_learn: form.what_youll_learn.value
+        .split("\n").map(s => s.trim()).filter(Boolean),
       preparation_notes: form.preparation_notes.value.trim(),
       tags: form.tags.value.split(",").map(s => s.trim()).filter(Boolean),
       group_mode: form.group_mode.value,
@@ -154,7 +181,6 @@
       min_group_size: parseInt(form.min_group_size.value, 10),
     };
 
-    // Collect discount curve
     const curve = [];
     document.querySelectorAll("#discount-rows .discount-row").forEach(row => {
       const min = parseInt(row.querySelector("[data-min]").value, 10);
@@ -167,11 +193,18 @@
   }
 
   async function save(publish) {
+    if (!session) {
+      toast("You're not signed in. Please refresh.");
+      return;
+    }
+
     const payload = collectForm();
     payload.status = publish ? "published" : "draft";
 
+    if (!payload.title) { toast("Please enter a lesson title."); return; }
+    if (!payload.category_id) { toast("Please choose a category."); return; }
+
     try {
-      // Save discount curve to profile
       await db.from("profiles")
         .update({ group_discount_curve: payload.group_discount_curve })
         .eq("id", session.id);
@@ -196,9 +229,19 @@
   }
 
   async function renderPreview() {
+    if (!session) return;
     const data = collectForm();
-    const { data: profile } = await db.from("profiles").select("name, avatar_url").eq("id", session.id).single();
-    document.getElementById("preview-card").innerHTML = `
+
+    const { data: profile } = await db
+      .from("profiles")
+      .select("name, avatar_url")
+      .eq("id", session.id)
+      .single();
+
+    const preview = document.getElementById("preview-card");
+    if (!preview) return;
+
+    preview.innerHTML = `
       <div class="lesson-card__media">
         <img src="${data.cover_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=70"}" alt="">
         <span class="lesson-card__price">$${Number(data.price).toFixed(0)}</span>
@@ -213,7 +256,7 @@
         <div class="lesson-card__teacher">
           <img src="${profile?.avatar_url || `https://i.pravatar.cc/60?u=${session.id}`}" alt="">
           <div>
-            <div class="lesson-card__teacher-name">${profile?.name || "You"}</div>
+            <div class="lesson-card__teacher-name">${h.escapeHtml(profile?.name || "You")}</div>
           </div>
         </div>
       </div>

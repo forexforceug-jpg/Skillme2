@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service â€” Skillme2</title>
+  <title>Terms of Service — Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/feed.css">
   <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/legal.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
 <body class="feed">
@@ -28,53 +29,242 @@
       </a>
     </div>
     <div class="topbar__center"></div>
-    <div class="topbar__right">
-      <button class="btn btn--navy" data-action="session">Sign In</button>
-    </div>
+    <div class="topbar__right" data-user-slot></div>
   </header>
 
   <div class="app" id="app">
     <aside class="sidebar" id="sidebar"></aside>
 
     <main class="main">
-      <div class="legal-doc">
-        <span class="eyebrow">Legal</span>
-        <h1>Terms of Service</h1>
-        <p class="legal-doc__updated">Last updated: October 2026</p>
+      <article class="legal-page">
 
-        <h2>1. Acceptance of Terms</h2>
-        <p>By accessing or using Skillme2, you agree to be bound by these Terms of Service. If you do not agree, do not use the platform.</p>
+        <div class="legal-page__head">
+          <span class="eyebrow">Legal</span>
+          <h1>Terms of Service</h1>
+          <p class="legal-page__updated">Last updated: October 12, 2026</p>
+        </div>
 
-        <h2>2. The Platform</h2>
-        <p>Skillme2 is a marketplace connecting students with independent trader-mentors for live one-on-one lessons. Skillme2 does not provide trading advice and is not a broker, financial advisor, or investment manager.</p>
+        <p class="legal-page__intro">
+          These Terms of Service ("Terms") govern your access to and use of Skillme2
+          ("the Platform", "we", "us"). By creating an account, booking a lesson, or
+          publishing a lesson, you agree to be bound by these Terms.
+        </p>
 
-        <h2>3. Mentor Responsibilities</h2>
-        <p>Mentors are independent contractors. They are responsible for the accuracy of their profile, the delivery of booked lessons, and compliance with all applicable laws in their jurisdiction. Mentors must not guarantee profits or make misleading claims about trading outcomes.</p>
+        <nav class="legal-page__toc">
+          <h3>On this page</h3>
+          <ol>
+            <li><a href="#acceptance">1. Acceptance of terms</a></li>
+            <li><a href="#platform">2. What Skillme2 is</a></li>
+            <li><a href="#accounts">3. Accounts</a></li>
+            <li><a href="#teacher-terms">4. Teacher responsibilities</a></li>
+            <li><a href="#student-terms">5. Student responsibilities</a></li>
+            <li><a href="#payments">6. Payments, wallet, and escrow</a></li>
+            <li><a href="#cancellations">7. Cancellations and refunds</a></li>
+            <li><a href="#conduct">8. Prohibited conduct</a></li>
+            <li><a href="#content">9. Content and intellectual property</a></li>
+            <li><a href="#disputes">10. Disputes</a></li>
+            <li><a href="#liability">11. Limitation of liability</a></li>
+            <li><a href="#changes">12. Changes to these terms</a></li>
+          </ol>
+        </nav>
 
-        <h2>4. Student Responsibilities</h2>
-        <p>Students are responsible for attending booked lessons, respecting mentors, and understanding that trading involves substantial risk of loss. Nothing taught on Skillme2 constitutes financial advice.</p>
+        <section class="legal-page__section" id="acceptance">
+          <h2>1. Acceptance of terms</h2>
+          <p>
+            By accessing or using Skillme2, you confirm that you are at least 18 years
+            old (or have parental consent if younger), and that you agree to be bound
+            by these Terms. If you do not agree, do not use the Platform.
+          </p>
+        </section>
 
-        <h2>5. Payments</h2>
-        <p>All lesson payments are processed through our payment partner. Skillme2 holds funds in escrow until a lesson is completed, then releases the mentor's share minus platform commission. Refunds are handled per our Refund Policy.</p>
+        <section class="legal-page__section" id="platform">
+          <h2>2. What Skillme2 is</h2>
+          <p>
+            Skillme2 is a marketplace that connects people who want to teach live
+            lessons with people who want to learn. We do not teach lessons ourselves.
+            We provide the platform for teachers to publish lessons, for students to
+            book them, for payments to be processed securely, and for lessons to be
+            delivered over Zoom.
+          </p>
+          <p>
+            Every teacher on Skillme2 is an independent contractor. They are not
+            employees, agents, or representatives of Skillme2. Every lesson is a
+            direct agreement between the teacher and the student.
+          </p>
+        </section>
 
-        <h2>6. Prohibited Conduct</h2>
-        <p>Users must not use Skillme2 to promote unlicensed financial services, solicit investments, share pirated material, or engage in harassment. Violations may result in account termination.</p>
+        <section class="legal-page__section" id="accounts">
+          <h2>3. Accounts</h2>
+          <p>
+            You need an account to book or publish lessons. You can sign up with email
+            and password or with Google. You must provide accurate information and keep
+            your login credentials secure. You are responsible for all activity under
+            your account.
+          </p>
+          <p>
+            You can be both a student and a teacher on the same account. Any user who
+            publishes a lesson becomes a teacher automatically.
+          </p>
+        </section>
 
-        <h2>7. Limitation of Liability</h2>
-        <p>Skillme2 is provided "as is." We are not liable for trading losses, missed lessons, or disputes between users. Our maximum liability is limited to the fees you have paid to Skillme2 in the previous 12 months.</p>
+        <section class="legal-page__section" id="teacher-terms">
+          <h2>4. Teacher responsibilities</h2>
+          <p>If you publish a lesson on Skillme2, you agree to:</p>
+          <ul>
+            <li>Provide accurate information about your expertise and experience</li>
+            <li>Deliver the lesson as described, on time, and in good faith</li>
+            <li>Set a fair price and honor it for confirmed bookings</li>
+            <li>Respond to booking requests within a reasonable time</li>
+            <li>Not guarantee profits, returns, or outcomes of any kind</li>
+            <li>Not make misleading claims about your qualifications</li>
+            <li>Comply with all applicable laws in your jurisdiction</li>
+          </ul>
+          <p>
+            Verified Teacher badges are subject to review. We may revoke verification
+            at any time if we determine the information provided was inaccurate.
+          </p>
+        </section>
 
-        <h2>8. Changes</h2>
-        <p>We may update these terms. Continued use of Skillme2 after changes constitutes acceptance.</p>
+        <section class="legal-page__section" id="student-terms">
+          <h2>5. Student responsibilities</h2>
+          <p>If you book a lesson on Skillme2, you agree to:</p>
+          <ul>
+            <li>Show up on time for the lesson you booked</li>
+            <li>Treat the teacher with respect</li>
+            <li>Provide accurate payment information</li>
+            <li>Not record the lesson without the teacher's permission</li>
+            <li>Understand that a lesson is not professional advice of any kind</li>
+          </ul>
+          <p>
+            Skillme2 is an educational marketplace. Nothing taught on the Platform
+            constitutes professional advice — legal, financial, medical, or otherwise.
+            You are responsible for your own decisions.
+          </p>
+        </section>
 
-        <h2>9. Contact</h2>
-        <p>Questions: <a href="mailto:support@skillme2.com">support@skillme2.com</a></p>
-      </div>
+        <section class="legal-page__section" id="payments">
+          <h2>6. Payments, wallet, and escrow</h2>
+          <p>
+            All payments are processed through Skillme2's wallet system. When you book
+            a lesson, the lesson price is deducted from your available balance and held
+            in escrow. When the lesson is completed and both parties confirm, the funds
+            are released to the teacher minus the Platform's service fee.
+          </p>
+          <p>
+            Wallet balances are in USD. Top-ups are processed through third-party
+            payment providers. Withdrawals are processed weekly to the teacher's
+            chosen payout method.
+          </p>
+          <p>
+            The Platform's service fee is currently 20% of each lesson's price. This
+            may change with notice.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="cancellations">
+          <h2>7. Cancellations and refunds</h2>
+          <p>Cancellation refunds follow a sliding scale based on how close to the lesson you cancel:</p>
+          <ul>
+            <li>24+ hours before the lesson: 100% refund to your wallet</li>
+            <li>2–24 hours before the lesson: 50% refund to your wallet</li>
+            <li>Less than 2 hours, or no-show: no refund</li>
+            <li>If the teacher cancels: 100% refund regardless of timing</li>
+          </ul>
+          <p>
+            Refunds are credited to your Skillme2 wallet, not your original payment
+            method. Wallet funds can be used for future bookings.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="conduct">
+          <h2>8. Prohibited conduct</h2>
+          <p>You may not use Skillme2 to:</p>
+          <ul>
+            <li>Offer unlicensed financial, legal, or medical services</li>
+            <li>Solicit investments or money from other users outside the Platform</li>
+            <li>Share pirated, illegal, or harmful material</li>
+            <li>Harass, threaten, or discriminate against other users</li>
+            <li>Create fake accounts or impersonate others</li>
+            <li>Circumvent the Platform's payment system</li>
+            <li>Violate any applicable law</li>
+          </ul>
+          <p>Violations may result in suspension or permanent termination.</p>
+        </section>
+
+        <section class="legal-page__section" id="content">
+          <h2>9. Content and intellectual property</h2>
+          <p>
+            You retain ownership of the content you create — lesson descriptions,
+            messages, profile information. By publishing content on Skillme2, you grant
+            us a non-exclusive, worldwide license to display it on the Platform.
+          </p>
+          <p>
+            You may not copy, reproduce, or redistribute another user's content without
+            their permission. Lesson materials provided by a teacher are for the
+            student's personal use only.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="disputes">
+          <h2>10. Disputes</h2>
+          <p>
+            If a lesson does not go as planned, either party can raise a dispute within
+            48 hours. Disputes are reviewed by Skillme2 support. Our decision is final
+            for the purpose of releasing or refunding escrowed funds.
+          </p>
+          <p>
+            Disputes that cannot be resolved through our support process may be subject
+            to mediation or arbitration in the jurisdiction where Skillme2 operates.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="liability">
+          <h2>11. Limitation of liability</h2>
+          <p>
+            Skillme2 is provided "as is". We do not guarantee that the Platform will be
+            uninterrupted, error-free, or that any lesson will meet your expectations.
+          </p>
+          <p>
+            To the maximum extent permitted by law, Skillme2's total liability to you
+            for any claim arising from your use of the Platform is limited to the
+            greater of (a) the fees you have paid to Skillme2 in the 12 months
+            preceding the claim, or (b) $100 USD.
+          </p>
+          <p>
+            We are not liable for indirect, incidental, or consequential damages —
+            including lost profits, lost data, or business interruption.
+          </p>
+        </section>
+
+        <section class="legal-page__section" id="changes">
+          <h2>12. Changes to these terms</h2>
+          <p>
+            We may update these Terms from time to time. When we do, we'll update the
+            "Last updated" date at the top of this page. Continued use of Skillme2
+            after changes take effect constitutes acceptance of the new Terms.
+          </p>
+        </section>
+
+        <div class="legal-page__contact">
+          <h3>Questions?</h3>
+          <p>
+            If you have questions about these Terms, contact us at
+            <a href="mailto:support@skillme2.com">support@skillme2.com</a>.
+          </p>
+        </div>
+
+      </article>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
-  <script src="../js/sidebar-shared.js"></script>
+  <script src="../js/constants.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/supabase-mutations.js"></script>
   <script src="../js/modals.js"></script>
+  <script src="../js/topbar.js"></script>
+  <script src="../js/sidebar.js"></script>
 </body>
 </html>
