@@ -8,8 +8,19 @@
   let activeCategory = "all";
   let searchQuery = "";
 
+  // ---------- Icons ----------
+  const ICON = {
+    like: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg>`,
+    lessons: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M8 3v6M16 3v6M3 11h18"/></svg>`,
+    clock: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+  };
+
   async function loadCategories() {
-    const { data } = await db.from("categories").select("*").eq("is_active", true).order("display_order");
+    const { data } = await db
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order");
     return data || [];
   }
 
@@ -21,8 +32,8 @@
         duration_minutes, price, group_mode, max_group_size, min_group_size,
         rating, review_count, booking_count, lesson_number,
         category_id, author_id,
-        categories (id, slug, name, icon),
-        profiles (id, name, avatar_url, rating, verification, is_teacher)
+        categories (id, slug, name),
+        profiles (id, name, avatar_url, likes_count, lessons_taught, verification, is_teacher)
       `)
       .eq("status", "published")
       .order("booking_count", { ascending: false })
@@ -54,7 +65,7 @@
     const chips = [
       `<button class="chip ${activeCategory === "all" ? "is-active" : ""}" data-cat="all">All</button>`,
       ...allCategories.map(c =>
-        `<button class="chip ${activeCategory === c.slug ? "is-active" : ""}" data-cat="${c.slug}">${c.icon || ""} ${c.name}</button>`
+        `<button class="chip ${activeCategory === c.slug ? "is-active" : ""}" data-cat="${c.slug}">${h.escapeHtml(c.name)}</button>`
       ),
     ];
     wrap.innerHTML = chips.join("");
@@ -81,7 +92,7 @@
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       list = list.filter(l =>
-        l.title.toLowerCase().includes(q) ||
+        (l.title || "").toLowerCase().includes(q) ||
         (l.description || "").toLowerCase().includes(q) ||
         (l.profiles?.name || "").toLowerCase().includes(q) ||
         (l.categories?.name || "").toLowerCase().includes(q)
@@ -99,17 +110,16 @@
   function renderLessonCard(l) {
     const teacher = l.profiles || {};
     const price = Number(l.price || 0).toFixed(0);
-    const rating = Number(l.rating || 0).toFixed(1);
+    const likes = Number(teacher.likes_count || 0);
+    const lessons = Number(teacher.lessons_taught || 0);
     const isGroup = l.group_mode !== "solo_only";
 
-    // Live indicator: is there a group session starting soon?
     const live = (window.__liveGroupSessions || []).find(g => g.lesson_id === l.id);
 
     return `
       <article class="lesson-card" data-lesson="${l.id}">
         <div class="lesson-card__media">
-          <img src="${l.cover_url || `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=70`}" alt="" loading="lazy">
-          <span class="lesson-card__badge">${l.categories?.icon || ""} ${l.categories?.name || "Lesson"}</span>
+          <img src="${l.cover_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=70"}" alt="" loading="lazy">
           ${live ? `
             <span class="lesson-card__live">
               <span class="live-dot"></span>
@@ -119,18 +129,18 @@
           <span class="lesson-card__price">$${price}</span>
         </div>
         <div class="lesson-card__body">
-          <h3 class="lesson-card__title">${l.title}</h3>
-          <p class="lesson-card__desc">${(l.description || "").slice(0, 100)}</p>
+          <h3 class="lesson-card__title">${h.escapeHtml(l.title)}</h3>
+          <p class="lesson-card__desc">${h.escapeHtml((l.description || "").slice(0, 100))}</p>
           <div class="lesson-card__meta">
-            <span class="lesson-card__rating">★ ${rating}</span>
-            <span>${l.review_count || 0} reviews</span>
-            <span>${l.duration_minutes} min</span>
+            <span class="lesson-card__stat">${ICON.like}${likes}</span>
+            <span class="lesson-card__stat">${ICON.lessons}${lessons} lessons</span>
+            <span class="lesson-card__stat">${ICON.clock}${l.duration_minutes} min</span>
           </div>
           <div class="lesson-card__teacher">
             <img src="${teacher.avatar_url || `https://i.pravatar.cc/60?u=${teacher.id}`}" alt="">
             <div>
-              <div class="lesson-card__teacher-name">${teacher.name || "Teacher"}</div>
-              <div class="lesson-card__teacher-sub">${isGroup ? `Groups up to ${l.max_group_size}` : "1:1"}</div>
+              <div class="lesson-card__teacher-name">${h.escapeHtml(teacher.name || "Teacher")}</div>
+              <div class="lesson-card__teacher-sub">${isGroup ? `Groups up to ${l.max_group_size}` : "1:1 session"}</div>
             </div>
           </div>
         </div>

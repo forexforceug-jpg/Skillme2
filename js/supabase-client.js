@@ -8,7 +8,12 @@
     return;
   }
 
-  window.Skillme2DB = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // No auth listener. No redirects.
+  window.Skillme2DB = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "pkce",
+    },
+  });
 })();

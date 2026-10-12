@@ -5,40 +5,90 @@
   const api = window.Skillme2.api;
   const h = window.Skillme2.helpers;
   const toast = window.Skillme2.toast;
+  const currency = window.Skillme2.currency;
+
   let session = null;
   let allTx = [];
+  let balances = {
+    available: 0,
+    escrow: 0,
+    withdrawable: 0,
+    earned: 0,
+  };
 
   async function init() {
     session = await auth.requireAuth();
     if (!session) return;
 
-    document.getElementById("topup-btn").addEventListener("click", openTopupModal);
-    document.getElementById("withdraw-btn").addEventListener("click", openWithdrawModal);
+    // Currency: load rates and restore saved choice
+    await currency.load();
+    currency.restoreSaved();
+    populateCurrencySelect();
+    currency.onChange(() => {
+      renderBalances();
+      renderTx(getActiveTab());
+    });
+
+    // Wire tabs
     wireTabs();
+    wireTopup();
+    wireWithdraw();
+
     await loadAll();
   }
 
+  // ---------- Currency picker ----------
+  function populateCurrencySelect() {
+    const sel = document.getElementById("currency-select");
+    const active = currency.getActive();
+    sel.innerHTML = currency.getRates()
+      .map(r => `<option value="${r.code}" ${r.code === active ? "selected" : ""}>${r.code} — ${r.name}</option>`)
+      .join("");
+    sel.addEventListener("change", () => {
+      currency.setActive(sel.value);
+      updateAmountInputLabels();
+    });
+    updateAmountInputLabels();
+  }
+
+  function updateAmountInputLabels() {
+    const code = currency.getActive();
+    const rate = currency.getRates().find(r => r.code === code);
+    ["topup", "withdraw"].forEach(prefix => {
+      const symbolEl = document.getElementById(`${prefix}-symbol`);
+      const currEl = document.getElementById(`${prefix}-currency`);
+      if (symbolEl) symbolEl.textContent = rate?.symbol || "$";
+      if (currEl) currEl.textContent = code;
+    });
+  }
+
+  // ---------- Load ----------
   async function loadAll() {
     const wallet = await auth.getWallet();
-    document.getElementById("wallet-available").textContent = `$${Number(wallet?.balance || 0).toFixed(2)}`;
+    balances.available = Number(wallet?.balance || 0);
 
+    // Escrow held on behalf of this user (as student)
     const { data: escrows } = await db
       .from("escrow")
-      .select("amount, status")
+      .select("amount, status, student_id, teacher_id")
       .or(`student_id.eq.${session.id},teacher_id.eq.${session.id}`);
 
-    const held = (escrows || []).filter(e => e.status === "held" && e.student_id === session.id)
+    balances.escrow = (escrows || [])
+      .filter(e => e.status === "held" && e.student_id === session.id)
       .reduce((s, e) => s + Number(e.amount), 0);
-    document.getElementById("wallet-escrow").textContent = `$${held.toFixed(2)}`;
 
+    // Withdrawable = Available when the user is a teacher (released earnings land in `balance`)
+    balances.withdrawable = balances.available;
+
+    // Lifetime earned
     const { data: earnings } = await db
       .from("wallet_transactions")
       .select("amount")
       .eq("profile_id", session.id)
       .eq("type", "earning");
+    balances.earned = (earnings || []).reduce((s, t) => s + Number(t.amount), 0);
 
-    const totalEarned = (earnings || []).reduce((s, t) => s + Number(t.amount), 0);
-    document.getElementById("wallet-earned").textContent = `$${totalEarned.toFixed(2)}`;
+    renderBalances();
 
     const { data: tx } = await db
       .from("wallet_transactions")
@@ -46,10 +96,41 @@
       .eq("profile_id", session.id)
       .order("created_at", { ascending: false })
       .limit(200);
-
     allTx = tx || [];
-    renderTx("all");
+    renderTx(getActiveTab());
   }
+
+  function renderBalances() {
+    setBalance("available", balances.available);
+    setBalance("escrow", balances.escrow);
+    setBalance("withdrawable", balances.withdrawable);
+    setBalance("earned", balances.earned);
+
+    // Set the withdraw-modal header amount
+    const wd = document.getElementById("withdraw-modal-available");
+    if (wd) wd.textContent = currency.format(balances.withdrawable);
+  }
+
+  function setBalance(key, usd) {
+    const mainEl = document.getElementById(`wallet-${key}`);
+    const nativeEl = document.getElementById(`wallet-${key}-native`);
+    if (mainEl) mainEl.textContent = currency.format(usd);
+    if (nativeEl) nativeEl.textContent = h.fmtPrice(usd, "USD");
+  }
+
+  // ---------- Tabs ----------
+  let activeTab = "all";
+  function wireTabs() {
+    document.querySelectorAll("#wallet-tabs .tabs__item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#wallet-tabs .tabs__item").forEach(b => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        activeTab = btn.dataset.tab;
+        renderTx(activeTab);
+      });
+    });
+  }
+  function getActiveTab() { return activeTab; }
 
   function renderTx(filter) {
     const el = document.getElementById("tx-list");
@@ -69,26 +150,21 @@
       <div class="pay-row">
         <div class="pay-row__main">
           <div class="pay-row__title">${typeLabel(t.type)}</div>
-          <div class="pay-row__meta">${h.fmtDate(t.created_at)} ${t.description ? "· " + h.escapeHtml(t.description) : ""}</div>
+          <div class="pay-row__meta">
+            ${h.fmtDate(t.created_at)}
+            ${t.description ? " · " + h.escapeHtml(t.description) : ""}
+          </div>
         </div>
         <div class="pay-row__status">
           <span class="pay-row__amount ${Number(t.amount) < 0 ? "is-neg" : "is-pos"}">
-            ${Number(t.amount) < 0 ? "" : "+"}$${Math.abs(Number(t.amount)).toFixed(2)}
+            ${Number(t.amount) < 0 ? "−" : "+"}${currency.format(Math.abs(Number(t.amount)))}
           </span>
-          ${t.balance_after != null ? `<span class="pay-row__note">Balance: $${Number(t.balance_after).toFixed(2)}</span>` : ""}
+          ${t.balance_after != null
+            ? `<span class="pay-row__note">Balance: ${currency.format(Number(t.balance_after))}</span>`
+            : ""}
         </div>
       </div>
     `).join("");
-  }
-
-  function wireTabs() {
-    document.querySelectorAll("#wallet-tabs .tabs__item").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#wallet-tabs .tabs__item").forEach(b => b.classList.remove("is-active"));
-        btn.classList.add("is-active");
-        renderTx(btn.dataset.tab);
-      });
-    });
   }
 
   function typeLabel(t) {
@@ -104,36 +180,140 @@
     }[t] || t;
   }
 
-  function openTopupModal() {
-    const amount = prompt("How much would you like to add? (USD)", "50");
-    if (!amount) return;
-    const amt = parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) { toast("Invalid amount."); return; }
+  // ---------- Top-up modal ----------
+  function wireTopup() {
+    const modal = document.getElementById("topup-modal");
+    const open = () => {
+      modal.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+    };
+    const close = () => {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+    };
 
-    // In production, this opens Flutterwave's checkout.
-    // For now, simulate a successful top-up.
-    api.topUpWallet(amt, "SIM-" + Date.now(), "Simulated")
-      .then(() => {
-        toast(`$${amt.toFixed(2)} added to your wallet.`);
+    document.getElementById("topup-btn").addEventListener("click", open);
+    modal.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", close));
+
+    modal.querySelectorAll("#topup-presets button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const input = modal.querySelector('input[name="amount"]');
+        const active = currency.getActive();
+        const rate = currency.getRates().find(r => r.code === active);
+        const usdAmount = Number(btn.dataset.amt);
+        // The preset buttons display USD values but the input is in the display currency
+        input.value = active === "USD" ? usdAmount : (usdAmount * (rate?.rate_to_usd || 1)).toFixed(2);
+      });
+    });
+
+    const form = document.getElementById("topup-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("[data-submit]");
+      btn.disabled = true;
+      btn.textContent = "Processing…";
+
+      const enteredAmount = parseFloat(form.amount.value);
+      const active = currency.getActive();
+      const rate = currency.getRates().find(r => r.code === active);
+      // Convert entered amount back to USD for storage
+      const usdAmount = active === "USD" ? enteredAmount : (enteredAmount / (rate?.rate_to_usd || 1));
+
+      if (!usdAmount || usdAmount <= 0) {
+        toast("Please enter a valid amount.");
+        btn.disabled = false;
+        btn.textContent = "Add funds";
+        return;
+      }
+
+      try {
+        await api.topUpWallet(
+          Math.round(usdAmount * 100) / 100,
+          "SIM-" + Date.now(),
+          "Simulated " + active
+        );
+        toast(`Added ${currency.format(usdAmount)} to your wallet.`);
         auth.clearCache();
-        loadAll();
-      })
-      .catch(err => toast(err.message));
+        close();
+        await loadAll();
+      } catch (err) {
+        toast(err.message || "Could not add funds.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Add funds";
+      }
+    });
   }
 
-  function openWithdrawModal() {
-    const amount = prompt("How much would you like to withdraw? (USD)", "50");
-    if (!amount) return;
-    const amt = parseFloat(amount);
-    if (isNaN(amt) || amt <= 0) { toast("Invalid amount."); return; }
+  // ---------- Withdraw modal ----------
+  function wireWithdraw() {
+    const modal = document.getElementById("withdraw-modal");
+    const open = () => {
+      modal.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+      const wd = document.getElementById("withdraw-modal-available");
+      if (wd) wd.textContent = currency.format(balances.withdrawable);
+    };
+    const close = () => {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+    };
 
-    api.requestPayout(amt, "Mobile Money")
-      .then(() => {
-        toast(`Withdrawal of $${amt.toFixed(2)} requested.`);
+    document.getElementById("withdraw-btn").addEventListener("click", open);
+    modal.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", close));
+
+    const form = document.getElementById("withdraw-form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("[data-submit]");
+      btn.disabled = true;
+      btn.textContent = "Requesting…";
+
+      const enteredAmount = parseFloat(form.amount.value);
+      const active = currency.getActive();
+      const rate = currency.getRates().find(r => r.code === active);
+      const usdAmount = active === "USD" ? enteredAmount : (enteredAmount / (rate?.rate_to_usd || 1));
+
+      if (!usdAmount || usdAmount <= 0) {
+        toast("Please enter a valid amount.");
+        btn.disabled = false;
+        btn.textContent = "Request withdrawal";
+        return;
+      }
+
+      if (usdAmount > balances.available) {
+        toast("Amount exceeds your withdrawable balance.");
+        btn.disabled = false;
+        btn.textContent = "Request withdrawal";
+        return;
+      }
+
+      const method = form.method.value;
+      const detail = form.detail.value.trim();
+      if (!detail) {
+        toast("Please enter your account details.");
+        btn.disabled = false;
+        btn.textContent = "Request withdrawal";
+        return;
+      }
+
+      try {
+        await db.from("profiles").update({
+          payout_method: { method, detail },
+        }).eq("id", session.id);
+
+        await api.requestPayout(Math.round(usdAmount * 100) / 100, method);
+        toast(`Withdrawal of ${currency.format(usdAmount)} requested.`);
         auth.clearCache();
-        loadAll();
-      })
-      .catch(err => toast(err.message));
+        close();
+        await loadAll();
+      } catch (err) {
+        toast(err.message || "Could not request withdrawal.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Request withdrawal";
+      }
+    });
   }
 
   if (document.readyState !== "loading") init();

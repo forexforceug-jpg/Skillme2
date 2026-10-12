@@ -14,9 +14,7 @@
   flex-wrap: wrap;
 }
 
-.teacher-hero__avatar {
-  flex-shrink: 0;
-}
+.teacher-hero__avatar { flex-shrink: 0; }
 .teacher-hero__avatar img {
   width: 140px;
   height: 140px;
@@ -29,6 +27,30 @@
 .teacher-hero__info {
   flex: 1;
   min-width: 260px;
+}
+
+.teacher-hero__badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  border: 1px solid;
+}
+.badge--verified {
+  background: rgba(201, 162, 74, 0.12);
+  color: var(--gold);
+  border-color: rgba(201, 162, 74, 0.4);
 }
 
 .teacher-hero__info h1 {
@@ -49,20 +71,17 @@
 
 .teacher-hero__stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  margin-bottom: 1.5rem;
 }
-@media (max-width: 640px) {
-  .teacher-hero__stats { grid-template-columns: repeat(2, 1fr); }
-}
-
 .teacher-hero__stats > div {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 .teacher-hero__stats strong {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: #fff;
   font-feature-settings: "tnum";
@@ -77,16 +96,10 @@
   font-weight: 600;
 }
 
-/* ---------- LESSONS SECTION ---------- */
-.page-section {
-  margin-bottom: 3rem;
-}
-.page-section .table-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.01em;
+.teacher-hero__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 720px) {
@@ -96,16 +109,16 @@
     text-align: center;
     padding: 1.5rem;
   }
-  .teacher-hero__info h1 { font-size: 1.6rem; }
-  .teacher-hero__avatar img {
-    width: 110px;
-    height: 110px;
-  }
+  .teacher-hero__info h1 { font-size: 1.5rem; }
+  .teacher-hero__avatar img { width: 110px; height: 110px; }
   .teacher-hero__stats {
-    text-align: center;
+    grid-template-columns: repeat(3, 1fr);
     width: 100%;
+    text-align: center;
   }
-  .teacher-hero__stats > div {
-    align-items: center;
+  .teacher-hero__stats > div { align-items: center; }
+  .teacher-hero__actions {
+    width: 100%;
+    justify-content: center;
   }
 }

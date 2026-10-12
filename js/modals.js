@@ -235,14 +235,14 @@
       btn.textContent = "Creating account…";
 
       try {
-        const { data, error } = await db.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { name },
-            emailRedirectTo: window.location.origin + "/pages/onboarding.html",
-          },
-        });
+       const { data, error } = await db.auth.signUp({
+  email,
+  password,
+  options: {
+    data: { name },
+    emailRedirectTo: `${window.location.origin}${window.location.pathname.includes("/pages/") ? "" : "/pages"}/onboarding.html`,
+  },
+});
         if (error) throw error;
 
         if (data.session) {

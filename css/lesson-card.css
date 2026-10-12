@@ -410,3 +410,21 @@
   margin-top: 0.75rem;
   font-style: italic;
 }
+/* ---------- CARD STATS (icon + number) ---------- */
+.lesson-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-feature-settings: "tnum";
+  font-weight: 600;
+}
+.lesson-card__stat svg {
+  color: var(--gold);
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Remove the old rating-based rules if they exist */
+.lesson-card__rating { display: none; }

@@ -1,0 +1,117 @@
+/* ============================================
+   SKILLME2 — REVIEWS & LIKES
+   ============================================ */
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review {
+  padding: 1.25rem 1.4rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+}
+.review:hover {
+  border-color: rgba(201, 162, 74, 0.25);
+}
+
+.review__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.review__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-teal), var(--navy-700));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--surface-line-strong);
+}
+
+.review__meta {
+  flex: 1;
+  min-width: 0;
+}
+.review__meta strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.review__date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.review__body {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0;
+}
+.review__body--empty {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ---------- LIKE BUTTON ---------- */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-feature-settings: "tnum";
+  flex-shrink: 0;
+}
+.like-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.like-btn.is-liked {
+  background: rgba(201, 162, 74, 0.12);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.like-btn.is-liked svg {
+  fill: var(--gold);
+  stroke: var(--gold);
+}
+.like-btn svg {
+  flex-shrink: 0;
+}
+.like-btn__count {
+  line-height: 1;
+}
+
+/* ---------- LIKE BUTTON (large, on teacher profile) ---------- */
+.like-btn--lg {
+  padding: 0.7rem 1.4rem;
+  font-size: 0.9rem;
+  gap: 0.55rem;
+}
+.like-btn--lg svg {
+  width: 18px;
+  height: 18px;
+}

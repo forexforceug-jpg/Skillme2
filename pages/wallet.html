@@ -42,31 +42,54 @@
           <h1 class="page-title">Your balance</h1>
           <p class="page-desc">Top up to book lessons. Withdraw your earnings anytime.</p>
         </div>
+        <div class="wallet-head-controls">
+          <label class="currency-picker">
+            <span class="currency-picker__label">Display currency</span>
+            <select id="currency-select" class="currency-picker__select"></select>
+          </label>
+        </div>
       </div>
 
+      <!-- Balance summary -->
       <div class="wallet-balances">
         <div class="wallet-balance wallet-balance--primary">
           <span class="wallet-balance__label">Available</span>
           <span class="wallet-balance__value" id="wallet-available">$0.00</span>
-          <span class="wallet-balance__hint">Ready to spend</span>
+          <span class="wallet-balance__hint" id="wallet-available-native">$0.00 USD</span>
         </div>
         <div class="wallet-balance">
           <span class="wallet-balance__label">In Escrow</span>
           <span class="wallet-balance__value" id="wallet-escrow">$0.00</span>
-          <span class="wallet-balance__hint">Held for upcoming lessons</span>
+          <span class="wallet-balance__hint" id="wallet-escrow-native">$0.00 USD</span>
         </div>
         <div class="wallet-balance">
-          <span class="wallet-balance__label">Earned</span>
+          <span class="wallet-balance__label">Withdrawable</span>
+          <span class="wallet-balance__value" id="wallet-withdrawable">$0.00</span>
+          <span class="wallet-balance__hint" id="wallet-withdrawable-native">$0.00 USD</span>
+        </div>
+        <div class="wallet-balance">
+          <span class="wallet-balance__label">Lifetime Earned</span>
           <span class="wallet-balance__value" id="wallet-earned">$0.00</span>
-          <span class="wallet-balance__hint">Lifetime teaching income</span>
+          <span class="wallet-balance__hint" id="wallet-earned-native">$0.00 USD</span>
         </div>
       </div>
 
       <div class="wallet-actions">
-        <button class="btn btn--navy" id="topup-btn">Add funds</button>
-        <button class="btn btn--ghost" id="withdraw-btn">Withdraw</button>
+        <button class="btn btn--navy" id="topup-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Add funds
+        </button>
+        <button class="btn btn--ghost" id="withdraw-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+          Withdraw
+        </button>
       </div>
 
+      <!-- Tabs -->
       <nav class="tabs" role="tablist" id="wallet-tabs">
         <button class="tabs__item is-active" data-tab="all">All</button>
         <button class="tabs__item" data-tab="topups">Top-ups</button>
@@ -81,12 +104,104 @@
     </main>
   </div>
 
+  <!-- Top-up modal -->
+  <div class="modal-root" id="topup-modal">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal__close" data-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="modal__body">
+        <div class="modal__header">
+          <span class="eyebrow">Add funds</span>
+          <h2>Top up your wallet</h2>
+          <p class="modal__sub">Simulated for testing. In production this opens Flutterwave or Paystack.</p>
+        </div>
+
+        <form class="modal__form" id="topup-form">
+          <label>
+            <span>Amount</span>
+            <div class="amount-input">
+              <span class="amount-input__symbol" id="topup-symbol">$</span>
+              <input type="number" name="amount" min="1" step="0.01" value="50" required>
+              <span class="amount-input__currency" id="topup-currency">USD</span>
+            </div>
+          </label>
+
+          <div class="amount-presets" id="topup-presets">
+            <button type="button" data-amt="10">$10</button>
+            <button type="button" data-amt="25">$25</button>
+            <button type="button" data-amt="50">$50</button>
+            <button type="button" data-amt="100">$100</button>
+          </div>
+
+          <button type="submit" class="btn btn--navy btn--block" data-submit>Add funds</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdraw modal -->
+  <div class="modal-root" id="withdraw-modal">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="modal__close" data-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="modal__body">
+        <div class="modal__header">
+          <span class="eyebrow">Withdraw</span>
+          <h2>Withdraw funds</h2>
+          <p class="modal__sub">Send money from your available balance to your payout method.</p>
+        </div>
+
+        <div class="wallet-summary-line">
+          <span>Withdrawable</span>
+          <strong id="withdraw-modal-available">$0.00</strong>
+        </div>
+
+        <form class="modal__form" id="withdraw-form">
+          <label>
+            <span>Amount</span>
+            <div class="amount-input">
+              <span class="amount-input__symbol" id="withdraw-symbol">$</span>
+              <input type="number" name="amount" min="1" step="0.01" value="20" required>
+              <span class="amount-input__currency" id="withdraw-currency">USD</span>
+            </div>
+          </label>
+
+          <label>
+            <span>Payout method</span>
+            <select name="method" id="withdraw-method">
+              <option value="mobile_money">Mobile Money</option>
+              <option value="bank">Bank transfer</option>
+              <option value="paypal">PayPal</option>
+            </select>
+          </label>
+
+          <label id="withdraw-detail-label">
+            <span>Account detail</span>
+            <input type="text" name="detail" placeholder="Phone number, account, or email" required>
+          </label>
+
+          <button type="submit" class="btn btn--navy btn--block" data-submit>Request withdrawal</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/supabase-client.js"></script>
   <script src="../js/constants.js"></script>
   <script src="../js/notifications.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/supabase-mutations.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/currency.js"></script>
   <script src="../js/modals.js"></script>
   <script src="../js/topbar.js"></script>
   <script src="../js/sidebar.js"></script>
