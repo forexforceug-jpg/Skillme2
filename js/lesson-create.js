@@ -7,7 +7,7 @@
   const toast = window.Skillme2.toast;
   const C = window.Skillme2.CONSTANTS;
 
-  let session = null;      // module-level so all functions can see it
+  let session = null;
   let currentStep = 1;
   let editingId = null;
 
@@ -17,7 +17,7 @@
 
     editingId = new URLSearchParams(location.search).get("id");
 
-    // Categories
+    // Populate category dropdown
     const { data: cats } = await db
       .from("categories")
       .select("*")
@@ -26,10 +26,10 @@
 
     const catSel = document.getElementById("cat-select");
     catSel.innerHTML = (cats || [])
-      .map(c => `<option value="${c.id}">${c.icon || ""} ${c.name}</option>`)
+      .map(c => `<option value="${c.id}">${c.name}</option>`)
       .join("");
 
-    // Durations
+    // Populate duration dropdown
     const durSel = document.getElementById("dur-select");
     durSel.innerHTML = C.DURATIONS
       .map(d => `<option value="${d}" ${d === 60 ? "selected" : ""}>${d} minutes</option>`)
@@ -160,36 +160,88 @@
     });
   }
 
+  // ---------- Collect + validate ----------
   function collectForm() {
     const form = document.getElementById("lesson-form");
-    const data = {
-      title: form.title.value.trim(),
-      description: form.description.value.trim(),
-      body: form.body.value.trim(),
-      category_id: form.category_id.value,
-      level: form.level.value,
-      language: form.language.value.trim(),
-      duration_minutes: parseInt(form.duration_minutes.value, 10),
-      price: parseFloat(form.price.value),
-      cover_url: form.cover_url.value.trim() || null,
-      what_youll_learn: form.what_youll_learn.value
-        .split("\n").map(s => s.trim()).filter(Boolean),
-      preparation_notes: form.preparation_notes.value.trim(),
-      tags: form.tags.value.split(",").map(s => s.trim()).filter(Boolean),
-      group_mode: form.group_mode.value,
-      max_group_size: parseInt(form.max_group_size.value, 10),
-      min_group_size: parseInt(form.min_group_size.value, 10),
-    };
 
+    const title = (form.title.value || "").trim();
+    const description = (form.description.value || "").trim();
+    const body = (form.body.value || "").trim();
+    const category_id = form.category_id.value || null;   // "" → null
+    const level = form.level.value || "all";
+    const language = (form.language.value || "English").trim();
+
+    const rawDuration = form.duration_minutes.value;
+    const duration_minutes = rawDuration ? parseInt(rawDuration, 10) : 60;
+
+    const rawPrice = form.price.value;
+    const price = rawPrice !== "" ? parseFloat(rawPrice) : 0;
+
+    const cover_url = (form.cover_url.value || "").trim() || null;
+    const preparation_notes = (form.preparation_notes.value || "").trim();
+    const group_mode = form.group_mode.value || "solo_only";
+
+    const rawMax = form.max_group_size.value;
+    const rawMin = form.min_group_size.value;
+    const max_group_size = rawMax ? parseInt(rawMax, 10) : 1;
+    const min_group_size = rawMin ? parseInt(rawMin, 10) : 1;
+
+    const what_youll_learn = (form.what_youll_learn.value || "")
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    const tags = (form.tags.value || "")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+
+    // Validation
+    const errors = [];
+    if (!title) errors.push("Lesson title is required.");
+    if (!category_id) errors.push("Please choose a category.");
+    if (Number.isNaN(duration_minutes) || duration_minutes < 5) {
+      errors.push("Duration must be a number greater than 5.");
+    }
+    if (Number.isNaN(price) || price < 0) {
+      errors.push("Price must be a number of 0 or greater.");
+    }
+    if (!["solo_only", "group_allowed", "group_required"].includes(group_mode)) {
+      errors.push("Invalid group mode.");
+    }
+
+    if (errors.length) {
+      const err = new Error(errors[0]);
+      err.validation = errors;
+      throw err;
+    }
+
+    // Discount curve (stored on profile, not on lesson)
     const curve = [];
     document.querySelectorAll("#discount-rows .discount-row").forEach(row => {
       const min = parseInt(row.querySelector("[data-min]").value, 10);
       const pct = parseInt(row.querySelector("[data-pct]").value, 10);
       if (!isNaN(min) && !isNaN(pct)) curve.push({ min_seats: min, percent: pct });
     });
-    data.group_discount_curve = curve;
 
-    return data;
+    return {
+      title,
+      description,
+      body,
+      category_id,
+      level,
+      language,
+      duration_minutes,
+      price,
+      cover_url,
+      what_youll_learn,
+      preparation_notes,
+      tags,
+      group_mode,
+      max_group_size,
+      min_group_size,
+      group_discount_curve: curve,
+    };
   }
 
   async function save(publish) {
@@ -198,22 +250,34 @@
       return;
     }
 
-    const payload = collectForm();
+    let payload;
+    try {
+      payload = collectForm();
+    } catch (err) {
+      if (err.validation) {
+        toast(err.validation[0]);
+      } else {
+        toast(err.message || "Invalid form data.");
+      }
+      return;
+    }
+
     payload.status = publish ? "published" : "draft";
 
-    if (!payload.title) { toast("Please enter a lesson title."); return; }
-    if (!payload.category_id) { toast("Please choose a category."); return; }
-
     try {
+      // Save the discount curve on the profile (not on the lesson)
       await db.from("profiles")
         .update({ group_discount_curve: payload.group_discount_curve })
         .eq("id", session.id);
 
+      // Strip profile-only fields before writing the lesson
+      const { group_discount_curve, ...lessonPayload } = payload;
+
       let lesson;
       if (editingId) {
-        lesson = await api.updateLesson(editingId, payload);
+        lesson = await api.updateLesson(editingId, lessonPayload);
       } else {
-        lesson = await api.createLesson(payload);
+        lesson = await api.createLesson(lessonPayload);
       }
 
       if (publish) {
@@ -222,6 +286,7 @@
       } else {
         toast("Saved as draft.");
       }
+
       location.href = "my-classes.html?tab=teaching&sub=my-lessons";
     } catch (err) {
       toast(err.message || "Could not save.");
@@ -230,7 +295,15 @@
 
   async function renderPreview() {
     if (!session) return;
-    const data = collectForm();
+    let data;
+    try {
+      data = collectForm();
+    } catch (err) {
+      // Preview stays empty until the form is valid
+      const preview = document.getElementById("preview-card");
+      if (preview) preview.innerHTML = `<div class="dash-empty"><p>Fill in the required fields to see a preview.</p></div>`;
+      return;
+    }
 
     const { data: profile } = await db
       .from("profiles")
@@ -250,8 +323,8 @@
         <h3 class="lesson-card__title">${h.escapeHtml(data.title || "Your lesson")}</h3>
         <p class="lesson-card__desc">${h.escapeHtml(data.description || "")}</p>
         <div class="lesson-card__meta">
-          <span>${data.duration_minutes} min</span>
-          <span>${data.level}</span>
+          <span class="lesson-card__stat">${data.duration_minutes} min</span>
+          <span class="lesson-card__stat">${data.level}</span>
         </div>
         <div class="lesson-card__teacher">
           <img src="${profile?.avatar_url || `https://i.pravatar.cc/60?u=${session.id}`}" alt="">
