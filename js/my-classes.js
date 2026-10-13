@@ -1,4 +1,4 @@
-// js/my-classes.js
+﻿// js/my-classes.js
 (function () {
   const db = window.Skillme2DB;
   const auth = window.Skillme2.auth;
@@ -7,13 +7,15 @@
   const toast = window.Skillme2.toast;
 
   let session = null;
+  let countdownInterval = null;
 
   async function init() {
     session = await auth.requireAuth();
     if (!session) return;
 
     const firstName = (session.name || "there").split(" ")[0];
-    document.getElementById("mc-title").textContent = `Welcome, ${firstName}`;
+    const titleEl = document.getElementById("mc-title");
+    if (titleEl) titleEl.textContent = `Welcome, ${firstName}`;
 
     wireTabs();
     wireSubtabs();
@@ -21,6 +23,8 @@
     await loadTaking();
     await loadTeaching();
     await loadCourses();
+
+    startCountdownLoop();
   }
 
   function wireTabs() {
@@ -43,7 +47,6 @@
         loadTaking(btn.dataset.sub);
       });
     });
-
     document.querySelectorAll("#teaching-subtabs .subtabs__item").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll("#teaching-subtabs .subtabs__item").forEach(b => b.classList.remove("is-active"));
@@ -56,6 +59,7 @@
   function wireCreateDropdown() {
     const btn = document.getElementById("create-new-btn");
     const dd = document.getElementById("create-dropdown");
+    if (!btn || !dd) return;
     btn.addEventListener("click", e => {
       e.stopPropagation();
       dd.hidden = !dd.hidden;
@@ -65,9 +69,12 @@
     });
   }
 
-  // ---------- TAKING ----------
+  // ============================================================
+  // TAKING (as a student)
+  // ============================================================
   async function loadTaking(sub = "upcoming") {
     const container = document.getElementById("taking-list");
+    if (!container) return;
     container.innerHTML = `<div class="dash-empty"><p>Loading…</p></div>`;
 
     const { data: bookings } = await db
@@ -75,9 +82,8 @@
       .select(`
         *,
         lessons (id, title, cover_url, category_id,
-          categories (name, icon),
-          profiles (id, name, avatar_url)
-        )
+          categories (name),
+          profiles (id, name, avatar_url))
       `)
       .eq("student_id", session.id)
       .order("scheduled_at", { ascending: true });
@@ -86,11 +92,11 @@
     let list = bookings || [];
 
     if (sub === "upcoming") {
-      list = list.filter(b => new Date(b.scheduled_at).getTime() >= now && !["cancelled", "declined", "teacher_cancelled", "completed"].includes(b.status));
+      list = list.filter(b => new Date(b.scheduled_at).getTime() >= now && !["cancelled","declined","teacher_cancelled","completed"].includes(b.status));
     } else if (sub === "past") {
-      list = list.filter(b => b.status === "completed" || (new Date(b.scheduled_at).getTime() < now && !["cancelled", "declined", "teacher_cancelled"].includes(b.status)));
+      list = list.filter(b => b.status === "completed" || (new Date(b.scheduled_at).getTime() < now && !["cancelled","declined","teacher_cancelled"].includes(b.status)));
     } else {
-      list = list.filter(b => ["cancelled", "declined", "teacher_cancelled"].includes(b.status));
+      list = list.filter(b => ["cancelled","declined","teacher_cancelled"].includes(b.status));
     }
 
     if (!list.length) {
@@ -102,9 +108,12 @@
     wireBookingActions(container, "student");
   }
 
-  // ---------- TEACHING ----------
+  // ============================================================
+  // TEACHING (as a teacher)
+  // ============================================================
   async function loadTeaching(sub = "requests") {
     const container = document.getElementById("teaching-content");
+    if (!container) return;
     container.innerHTML = `<div class="dash-empty"><p>Loading…</p></div>`;
 
     if (sub === "requests") return loadTeacherRequests(container);
@@ -117,11 +126,7 @@
   async function loadTeacherRequests(container) {
     const { data: bookings } = await db
       .from("bookings")
-      .select(`
-        *,
-        lessons (title, cover_url),
-        profiles!bookings_student_id_fkey (id, name, avatar_url)
-      `)
+      .select(`*, lessons (title, cover_url), profiles!bookings_student_id_fkey (id, name, avatar_url)`)
       .eq("teacher_id", session.id)
       .eq("status", "pending")
       .order("created_at", { ascending: true });
@@ -130,9 +135,8 @@
       container.innerHTML = `<div class="dash-empty"><p>No pending requests.</p></div>`;
       return;
     }
-
     container.innerHTML = `<div class="dash-list">${bookings.map(b => renderRequestCard(b)).join("")}</div>`;
-    wireRequestActions(container);
+    wireBookingActions(container, "teacher");
   }
 
   async function loadTeacherUpcoming(container) {
@@ -155,7 +159,7 @@
       .from("bookings")
       .select(`*, lessons (title, cover_url), profiles!bookings_student_id_fkey (id, name, avatar_url)`)
       .eq("teacher_id", session.id)
-      .in("status", ["completed", "cancelled", "teacher_cancelled"])
+      .in("status", ["completed","cancelled","teacher_cancelled"])
       .order("scheduled_at", { ascending: false })
       .limit(50);
 
@@ -167,74 +171,97 @@
   async function loadTeacherLessons(container) {
     const { data: lessons } = await db
       .from("lessons")
-      .select(`*, categories (name, icon)`)
+      .select(`*, categories (name)`)
       .eq("author_id", session.id)
       .order("created_at", { ascending: false });
 
-    container.innerHTML = `
-      <div class="dash-list">
-        ${!lessons?.length ? `<div class="dash-empty"><p>You haven't created any lessons yet.</p></div>` : lessons.map(l => `
-          <div class="lesson-manage-row">
-            <div class="lesson-manage-row__cover">
-              <img src="${l.cover_url || `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&q=60`}" alt="">
-            </div>
-            <div class="lesson-manage-row__body">
-              <div class="lesson-manage-row__title">${h.escapeHtml(l.title)}</div>
-              <div class="lesson-manage-row__meta">
-                ${l.categories?.icon || ""} ${l.categories?.name || "No category"} · ${l.duration_minutes} min · $${Number(l.price).toFixed(2)}
-              </div>
-              <div class="lesson-manage-row__status">
-                <span class="status-pill status-pill--${l.status === "published" ? "completed" : "pending"}">${l.status}</span>
-                <span>${l.booking_count} bookings</span>
-              </div>
-            </div>
-            <div class="lesson-manage-row__actions">
-              <a href="lesson-create.html?id=${l.id}" class="btn btn--ghost">Edit</a>
-              ${l.status === "published" ? `
-                <button class="btn btn--ghost" data-archive="${l.id}">Archive</button>
-              ` : `
-                <button class="btn btn--navy" data-publish="${l.id}">Publish</button>
-              `}
-            </div>
+    const published = (lessons || []).filter(l => l.status === "published");
+    const drafts = (lessons || []).filter(l => l.status === "draft");
+    const archived = (lessons || []).filter(l => l.status === "archived");
+
+    const renderRow = (l) => `
+      <div class="lesson-manage-row">
+        <div class="lesson-manage-row__cover">
+          <img src="${l.cover_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=200&q=60"}" alt="">
+        </div>
+        <div class="lesson-manage-row__body">
+          <div class="lesson-manage-row__title">${h.escapeHtml(l.title)}</div>
+          <div class="lesson-manage-row__meta">${l.categories?.name || "No category"} · ${l.duration_minutes} min · ${Number(l.price).toFixed(2)}</div>
+          <div class="lesson-manage-row__status">
+            <span class="status-pill status-pill--${l.status === "published" ? "completed" : l.status === "draft" ? "pending" : "cancelled"}">${l.status}</span>
+            <span>${l.booking_count || 0} bookings</span>
           </div>
-        `).join("")}
+        </div>
+        <div class="lesson-manage-row__actions">
+          <a href="lesson-create.html?id=${l.id}" class="btn btn--ghost">Edit</a>
+          ${l.status === "published"
+            ? `<button class="btn btn--ghost" data-archive="${l.id}">Archive</button>`
+            : `<button class="btn btn--navy" data-publish="${l.id}">Publish</button>`}
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = `
+      <div class="mc-section">
+        <h2 class="mc-section-title">
+          Published
+          <span class="mc-section-title__count">${published.length}</span>
+        </h2>
+        ${published.length
+          ? `<div class="dash-list">${published.map(renderRow).join("")}</div>`
+          : `<div class="dash-empty"><p>No published lessons yet. Publish a draft to make it visible in the feed.</p></div>`}
+      </div>
+
+      ${drafts.length ? `
+        <div class="mc-section">
+          <h2 class="mc-section-title">
+            Drafts
+            <span class="mc-section-title__count">${drafts.length}</span>
+          </h2>
+          <div class="dash-list">${drafts.map(renderRow).join("")}</div>
+        </div>
+      ` : ""}
+
+      ${archived.length ? `
+        <div class="mc-section">
+          <h2 class="mc-section-title">
+            Archived
+            <span class="mc-section-title__count">${archived.length}</span>
+          </h2>
+          <div class="dash-list">${archived.map(renderRow).join("")}</div>
+        </div>
+      ` : ""}
+
+      <div class="mc-section" style="margin-top:2rem;">
+        <a href="lesson-create.html" class="btn btn--navy">+ Create another lesson</a>
       </div>
     `;
 
     container.querySelectorAll("[data-publish]").forEach(btn => {
       btn.addEventListener("click", async () => {
-        try {
-          await api.publishLesson(btn.dataset.publish);
-          toast("Lesson published.");
-          loadTeacherLessons(container);
-        } catch (err) { toast(err.message); }
+        try { await api.publishLesson(btn.dataset.publish); toast("Lesson published."); loadTeacherLessons(container); }
+        catch (err) { toast(err.message); }
       });
     });
-
     container.querySelectorAll("[data-archive]").forEach(btn => {
       btn.addEventListener("click", async () => {
-        try {
-          await api.archiveLesson(btn.dataset.archive);
-          toast("Lesson archived.");
-          loadTeacherLessons(container);
-        } catch (err) { toast(err.message); }
+        try { await api.archiveLesson(btn.dataset.archive); toast("Lesson archived."); loadTeacherLessons(container); }
+        catch (err) { toast(err.message); }
       });
     });
   }
 
   async function loadTeacherAvailability(container) {
     const { data: avail } = await db
-      .from("teacher_availability")
-      .select("*")
-      .eq("profile_id", session.id);
+      .from("teacher_availability").select("*").eq("profile_id", session.id);
 
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
     const timeSlots = ["06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"];
 
     const onSet = new Set();
     (avail || []).forEach(a => {
-      const start = a.start_time.slice(0, 5);
-      const end = a.end_time.slice(0, 5);
+      const start = a.start_time.slice(0,5);
+      const end = a.end_time.slice(0,5);
       let cur = start;
       while (cur < end) {
         onSet.add(`${a.day_of_week}-${cur}`);
@@ -262,21 +289,17 @@
       </div>
     `;
 
-    container.querySelectorAll(".avail-slot").forEach(s => {
-      s.addEventListener("click", () => s.classList.toggle("is-on"));
-    });
+    container.querySelectorAll(".avail-slot").forEach(s => s.addEventListener("click", () => s.classList.toggle("is-on")));
 
     container.querySelector("#save-avail").addEventListener("click", async () => {
       const btn = container.querySelector("#save-avail");
-      btn.disabled = true;
-      btn.textContent = "Saving…";
+      btn.disabled = true; btn.textContent = "Saving…";
 
       const on = [];
       container.querySelectorAll(".avail-slot.is-on").forEach(s => {
         on.push({ day_of_week: parseInt(s.dataset.day, 10), time: s.dataset.time });
       });
 
-      // Collapse consecutive hours into ranges
       const grouped = {};
       on.forEach(({ day_of_week, time }) => {
         if (!grouped[day_of_week]) grouped[day_of_week] = [];
@@ -301,69 +324,98 @@
         }
       });
 
-      try {
-        await api.setAvailability(slots);
-        toast("Availability saved.");
-      } catch (err) {
-        toast(err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Save availability";
-      }
+      try { await api.setAvailability(slots); toast("Availability saved."); }
+      catch (err) { toast(err.message); }
+      finally { btn.disabled = false; btn.textContent = "Save availability"; }
     });
   }
 
-  // ---------- COURSES ----------
+  // ============================================================
+  // COURSES
+  // ============================================================
   async function loadCourses() {
     const container = document.getElementById("courses-content");
+    if (!container) return;
+
     const { data: courses } = await db
       .from("courses")
       .select(`*, lessons (id)`)
       .eq("author_id", session.id)
       .order("created_at", { ascending: false });
 
-    if (!courses?.length) {
-      container.innerHTML = `<div class="dash-empty"><p>You haven't created any courses yet.</p><a href="course-create.html" class="btn btn--navy" style="margin-top:1rem;">Create course</a></div>`;
-      return;
-    }
+    const list = courses || [];
+    const published = list.filter(c => c.status === "published");
+    const drafts = list.filter(c => c.status === "draft");
+
+    const renderRow = (c) => `
+      <div class="course-row">
+        <div class="course-row__cover">
+          <img src="${c.cover_url || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=60"}" alt="">
+        </div>
+        <div class="course-row__body">
+          <div class="course-row__label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Course
+          </div>
+          <div class="course-row__title">${h.escapeHtml(c.title)}</div>
+          <div class="course-row__meta">${c.lessons?.length || 0} lessons bundled</div>
+          <div class="course-row__status">
+            <span class="status-pill status-pill--${c.status === "published" ? "completed" : "pending"}">${c.status}</span>
+          </div>
+        </div>
+        <div class="course-row__actions">
+          <a href="course-create.html?id=${c.id}" class="btn btn--ghost">Edit</a>
+          <a href="course.html?id=${c.id}" class="btn btn--ghost">View</a>
+        </div>
+      </div>
+    `;
 
     container.innerHTML = `
-      <div class="dash-list">
-        ${courses.map(c => `
-          <div class="lesson-manage-row">
-            <div class="lesson-manage-row__cover">
-              <img src="${c.cover_url || `https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=60`}" alt="">
-            </div>
-            <div class="lesson-manage-row__body">
-              <div class="lesson-manage-row__title">${h.escapeHtml(c.title)}</div>
-              <div class="lesson-manage-row__meta">${c.lessons?.length || 0} lessons</div>
-              <div class="lesson-manage-row__status">
-                <span class="status-pill status-pill--${c.status === "published" ? "completed" : "pending"}">${c.status}</span>
-              </div>
-            </div>
-            <div class="lesson-manage-row__actions">
-              <a href="course-create.html?id=${c.id}" class="btn btn--ghost">Edit</a>
-            </div>
-          </div>
-        `).join("")}
+      <div class="mc-section">
+        <h2 class="mc-section-title">
+          Published Courses
+          <span class="mc-section-title__count">${published.length}</span>
+        </h2>
+        ${published.length
+          ? `<div class="dash-list">${published.map(renderRow).join("")}</div>`
+          : `<div class="dash-empty"><p>No published courses yet.</p></div>`}
+      </div>
+
+      ${drafts.length ? `
+        <div class="mc-section">
+          <h2 class="mc-section-title">
+            Draft Courses
+            <span class="mc-section-title__count">${drafts.length}</span>
+          </h2>
+          <div class="dash-list">${drafts.map(renderRow).join("")}</div>
+        </div>
+      ` : ""}
+
+      <div class="mc-section" style="margin-top:2rem;">
+        <a href="course-create.html" class="btn btn--navy">+ Create another course</a>
       </div>
     `;
   }
 
-  // ---------- RENDER HELPERS ----------
-
+  // ============================================================
+  // BOOKING CARD
+  // ============================================================
   function renderBookingCard(b, viewAs) {
     const lesson = b.lessons || {};
-    const counterparty = viewAs === "student"
-      ? lesson.profiles || {}
-      : b.profiles || {};
+    const counterparty = viewAs === "student" ? lesson.profiles || {} : b.profiles || {};
     const status = b.status || "pending";
-    const hours = h.hoursUntil(b.scheduled_at);
-    const canJoin = status === "confirmed" && hours < 0.25 && hours > -2;
-    const canConfirm = status === "confirmed" && hours < 0;
+    const startMs = new Date(b.scheduled_at).getTime();
+    const endMs = startMs + (b.duration_minutes || 60) * 60000;
+    const now = Date.now();
+    const msUntil = startMs - now;
+    const TEN_MIN = 10 * 60 * 1000;
+
+    const showZoom = status === "confirmed" && msUntil <= TEN_MIN && msUntil > -2 * 60 * 60 * 1000;
+    const showCountdown = status === "confirmed" && msUntil > 0;
+    const canConfirm = status === "confirmed" && now > endMs;
 
     return `
-      <div class="booking-card">
+      <div class="booking-card" data-booking="${b.id}" data-start="${b.scheduled_at}" data-end-ms="${endMs}">
         <div class="booking-card__top">
           <span class="status-pill status-pill--${statusPillClass(status)}">${statusLabel(status)}</span>
           <span>${h.fmtDate(b.scheduled_at)} · ${b.duration_minutes} min</span>
@@ -377,15 +429,29 @@
           </div>
         </div>
         ${b.focus ? `<p class="booking-card__focus">"${h.escapeHtml(b.focus)}"</p>` : ""}
+
+        ${showCountdown ? `
+          <div class="lesson-countdown" data-countdown-target="${b.scheduled_at}">
+            <span class="lesson-countdown__label">Starts in</span>
+            <span class="lesson-countdown__value">--:--</span>
+          </div>
+        ` : ""}
+
+        ${showZoom ? `
+          <div class="lesson-zoom-row">
+            <span class="lesson-zoom-row__live"><span class="live-dot"></span> Live now</span>
+          </div>
+        ` : ""}
+
         <div class="booking-card__actions">
-          ${canJoin ? `<button class="btn btn--navy" data-join="${b.id}">Join Zoom</button>` : ""}
+          ${showZoom ? `<button class="btn btn--navy" data-join="${b.id}">Join Zoom</button>` : ""}
           ${canConfirm ? `<button class="btn btn--navy" data-confirm="${b.id}">Confirm completion</button>` : ""}
           ${status === "pending" && viewAs === "student" ? `<span class="booking-card__waiting">Waiting for teacher to accept…</span>` : ""}
           ${status === "pending" && viewAs === "teacher" ? `
             <button class="btn btn--navy" data-accept="${b.id}">Accept</button>
             <button class="btn btn--ghost" data-decline="${b.id}">Decline</button>
           ` : ""}
-          ${["pending", "confirmed"].includes(status) && viewAs === "student" ? `<button class="btn btn--ghost" data-cancel="${b.id}">Cancel</button>` : ""}
+          ${["pending","confirmed"].includes(status) && viewAs === "student" ? `<button class="btn btn--ghost" data-cancel="${b.id}">Cancel</button>` : ""}
           ${status === "completed" && viewAs === "student" ? `<button class="btn btn--ghost" data-review="${b.id}">Leave review</button>` : ""}
           <span class="booking-card__price">$${Number(b.price_paid).toFixed(2)}</span>
         </div>
@@ -420,7 +486,7 @@
 
   function wireBookingActions(container, viewAs) {
     container.querySelectorAll("[data-join]").forEach(btn => {
-      btn.addEventListener("click", () => toast("Zoom link will appear 15 minutes before the session."));
+      btn.addEventListener("click", () => toast("Zoom link will open in a new tab."));
     });
     container.querySelectorAll("[data-confirm]").forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -452,22 +518,50 @@
       });
     });
     container.querySelectorAll("[data-review]").forEach(btn => {
-      btn.addEventListener("click", () => openReviewModal(btn.dataset.review));
+      btn.addEventListener("click", () => {
+        const comment = prompt("Optional comment about the lesson:");
+        api.submitReview({ bookingId: btn.dataset.review, comment: comment || "" })
+          .then(() => { toast("Review submitted."); location.reload(); })
+          .catch(err => toast(err.message));
+      });
     });
   }
 
-  function wireRequestActions(container) {
-    wireBookingActions(container, "teacher");
+  // ============================================================
+  // LIVE COUNTDOWN
+  // ============================================================
+  function startCountdownLoop() {
+    if (countdownInterval) clearInterval(countdownInterval);
+    tickCountdowns();
+    countdownInterval = setInterval(tickCountdowns, 1000);
   }
 
-  async function openReviewModal(bookingId) {
-    let rating = 5;
-    const comment = prompt("Optional comment about the lesson:");
-    try {
-      await api.submitReview({ bookingId, rating, comment: comment || "" });
-      toast("Review submitted.");
-      location.reload();
-    } catch (err) { toast(err.message); }
+  function tickCountdowns() {
+    document.querySelectorAll("[data-countdown-target]").forEach(el => {
+      const startMs = new Date(el.dataset.countdownTarget).getTime();
+      const ms = startMs - Date.now();
+      const valueEl = el.querySelector(".lesson-countdown__value");
+      const labelEl = el.querySelector(".lesson-countdown__label");
+      if (!valueEl) return;
+
+      if (ms <= 0) {
+        valueEl.textContent = "Starting now";
+        labelEl.textContent = "";
+        el.classList.add("is-imminent");
+        return;
+      }
+
+      const totalSec = Math.floor(ms / 1000);
+      const hr = Math.floor(totalSec / 3600);
+      const mn = Math.floor((totalSec % 3600) / 60);
+      const sc = totalSec % 60;
+
+      valueEl.textContent = hr > 0
+        ? `${hr}h ${String(mn).padStart(2,"0")}m`
+        : `${mn}:${String(sc).padStart(2,"0")}`;
+
+      el.classList.toggle("is-imminent", ms <= 10 * 60 * 1000);
+    });
   }
 
   function statusPillClass(s) {

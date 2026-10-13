@@ -3,56 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Lesson â€” Skillme2</title>
+  <title>Create Lesson — Skillme2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/main.css">
-  <link rel="stylesheet" href="../css/reviews.css">
   <link rel="stylesheet" href="../css/feed.css">
   <link rel="stylesheet" href="../css/page.css">
+  <link rel="stylesheet" href="../css/lesson-card.css">
   <link rel="stylesheet" href="../css/lesson-create.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
 <body class="feed">
 
   <header class="topbar">
-  <div class="topbar__left">
-    <button class="topbar__menu" aria-label="Toggle sidebar">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M3 6h18M3 12h18M3 18h18"/>
-      </svg>
-    </button>
-    <a href="../index.html" class="topbar__logo">
-      <img src="../assets/logo/logo.png" alt="Skillme2">
-      <span class="topbar__wordmark">Skillme2</span>
-    </a>
-  </div>
-
-  <div class="topbar__center">
-    <div class="topbar__search">
-      <input type="text" id="feed-search" placeholder="Search lessons, teachers, or subjectsâ€¦" autocomplete="off">
-      <button class="topbar__search-icon" id="topbar-search-toggle" aria-label="Focus search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
+    <div class="topbar__left">
+      <button class="topbar__menu" aria-label="Toggle sidebar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 6h18M3 12h18M3 18h18"/>
         </svg>
       </button>
+      <a href="../index.html" class="topbar__logo">
+        <img src="../assets/logo/logo.png" alt="Skillme2">
+        <span class="topbar__wordmark">Skillme2</span>
+      </a>
     </div>
-  </div>
-
-  <div class="topbar__right">
-    <button class="topbar__search-trigger" id="topbar-search-trigger" aria-label="Open search">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="m21 21-4.35-4.35"/>
-      </svg>
-    </button>
-    <div data-user-slot></div>
-  </div>
-</header>
+    <div class="topbar__center">
+      <div class="topbar__search">
+        <input type="text" id="feed-search" placeholder="Search lessons, teachers, or subjects…" autocomplete="off">
+        <button class="topbar__search-icon" id="topbar-search-toggle" aria-label="Focus search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="topbar__right">
+      <button class="topbar__search-trigger" id="topbar-search-trigger" aria-label="Open search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+      <div data-user-slot></div>
+    </div>
+  </header>
 
   <div class="app" id="app">
     <aside class="sidebar" id="sidebar"></aside>
@@ -78,105 +74,130 @@
 
         <form id="lesson-form" class="wizard__form">
 
+          <!-- STEP 1 -->
           <section class="wizard__panel is-active" data-panel="1">
-            <label class="settings-block">
-              <span class="settings-block__label">Lesson title</span>
-              <input class="settings-input" type="text" name="title" required placeholder="e.g. Support & Resistance" maxlength="100">
-            </label>
-            <label class="settings-block">
-              <span class="settings-block__label">Short description</span>
-              <textarea class="settings-input" name="description" rows="2" maxlength="180" placeholder="One line that appears on the card"></textarea>
-            </label>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-title">Lesson title</label>
+              <input class="settings-input" type="text" id="lc-title" name="title" required placeholder="e.g. Support & Resistance" maxlength="100">
+            </div>
+
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-description">Short description</label>
+              <textarea class="settings-input" id="lc-description" name="description" rows="2" maxlength="180" placeholder="One line that appears on the card"></textarea>
+            </div>
+
             <div class="wizard__row">
-              <label class="settings-block">
-                <span class="settings-block__label">Category</span>
+              <div class="settings-block">
+                <label class="settings-block__label" for="cat-select">Category</label>
                 <select class="settings-input" name="category_id" required id="cat-select"></select>
-              </label>
-              <label class="settings-block">
-                <span class="settings-block__label">Level</span>
-                <select class="settings-input" name="level">
+              </div>
+              <div class="settings-block">
+                <label class="settings-block__label" for="lc-level">Level</label>
+                <select class="settings-input" name="level" id="lc-level">
                   <option value="all">All levels</option>
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="advanced">Advanced</option>
                 </select>
-              </label>
+              </div>
             </div>
+
             <div class="wizard__row">
-              <label class="settings-block">
-                <span class="settings-block__label">Language</span>
-                <input class="settings-input" type="text" name="language" value="English">
-              </label>
-              <label class="settings-block">
-                <span class="settings-block__label">Duration (minutes)</span>
+              <div class="settings-block">
+                <label class="settings-block__label" for="lc-language">Language</label>
+                <input class="settings-input" type="text" id="lc-language" name="language" value="English">
+              </div>
+              <div class="settings-block">
+                <label class="settings-block__label" for="dur-select">Duration (minutes)</label>
                 <select class="settings-input" name="duration_minutes" id="dur-select"></select>
-              </label>
+              </div>
             </div>
-            <label class="settings-block">
-              <span class="settings-block__label">Cover image URL (optional)</span>
-              <input class="settings-input" type="url" name="cover_url" placeholder="https://...">
-            </label>
+
+            <!-- Cover image upload -->
+            <div class="settings-block">
+              <label class="settings-block__label">Cover image</label>
+              <div class="cover-upload">
+                <div class="cover-upload__preview" id="cover-preview">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="9" cy="9" r="2"/>
+                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                  </svg>
+                  <span>No image</span>
+                </div>
+                <div class="cover-upload__actions">
+                  <button type="button" class="btn btn--ghost" id="cover-upload-btn">Upload image</button>
+                  <button type="button" class="btn btn--ghost" id="cover-remove-btn">Remove</button>
+                </div>
+              </div>
+              <input class="settings-input" type="url" name="cover_url" id="cover-url-input" placeholder="Or paste an image URL" style="margin-top:0.5rem;">
+            </div>
           </section>
 
+          <!-- STEP 2 -->
           <section class="wizard__panel" data-panel="2">
-            <label class="settings-block">
-              <span class="settings-block__label">Full explanation</span>
-              <textarea class="settings-input" name="body" rows="8" placeholder="What will you teach in this lesson?"></textarea>
-            </label>
-            <label class="settings-block">
-              <span class="settings-block__label">What you'll learn (one per line)</span>
-              <textarea class="settings-input" name="what_youll_learn" rows="4" placeholder="How to mark key levels&#10;Entry timing near support&#10;Stop placement for R:R > 2"></textarea>
-            </label>
-            <label class="settings-block">
-              <span class="settings-block__label">What to bring (optional)</span>
-              <textarea class="settings-input" name="preparation_notes" rows="2" placeholder="What should the student prepare?"></textarea>
-            </label>
-            <label class="settings-block">
-              <span class="settings-block__label">Tags (comma separated)</span>
-              <input class="settings-input" type="text" name="tags" placeholder="price action, support, resistance">
-            </label>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-body">Full explanation</label>
+              <textarea class="settings-input" id="lc-body" name="body" rows="8" placeholder="What will you teach in this lesson?"></textarea>
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-learn">What you'll learn (one per line)</label>
+              <textarea class="settings-input" id="lc-learn" name="what_youll_learn" rows="4" placeholder="How to mark key levels&#10;Entry timing near support&#10;Stop placement for R:R &gt; 2"></textarea>
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-prep">What to bring (optional)</label>
+              <textarea class="settings-input" id="lc-prep" name="preparation_notes" rows="2" placeholder="What should the student prepare?"></textarea>
+            </div>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-tags">Tags (comma separated)</label>
+              <input class="settings-input" type="text" id="lc-tags" name="tags" placeholder="price action, support, resistance">
+            </div>
           </section>
 
+          <!-- STEP 3 -->
           <section class="wizard__panel" data-panel="3">
-            <label class="settings-block">
-              <span class="settings-block__label">Price per lesson (USD)</span>
-              <input class="settings-input" type="number" name="price" min="0" step="0.01" value="30" required>
-            </label>
-            <p class="settings-hint">Enter 0 to offer this lesson for free.</p>
+            <div class="settings-block">
+              <label class="settings-block__label" for="lc-price">Price per lesson (USD)</label>
+              <input class="settings-input" type="number" id="lc-price" name="price" min="0" step="0.01" value="30" required>
+              <p class="settings-hint">Enter 0 to offer this lesson for free.</p>
+            </div>
           </section>
 
+          <!-- STEP 4 -->
           <section class="wizard__panel" data-panel="4">
-            <label class="settings-block">
-              <span class="settings-block__label">Format</span>
+            <div class="settings-block">
+              <label class="settings-block__label" for="group-mode-select">Format</label>
               <select class="settings-input" name="group_mode" id="group-mode-select">
                 <option value="solo_only">1:1 only</option>
                 <option value="group_allowed">Allow groups (students can join a scheduled session)</option>
                 <option value="group_required">Group required (only runs if minimum seats fill)</option>
               </select>
-            </label>
+            </div>
             <div id="group-fields" hidden>
               <div class="wizard__row">
-                <label class="settings-block">
-                  <span class="settings-block__label">Max seats</span>
-                  <input class="settings-input" type="number" name="max_group_size" min="2" max="20" value="6">
-                </label>
-                <label class="settings-block">
-                  <span class="settings-block__label">Min seats</span>
-                  <input class="settings-input" type="number" name="min_group_size" min="1" max="20" value="2">
-                </label>
+                <div class="settings-block">
+                  <label class="settings-block__label" for="lc-max">Max seats</label>
+                  <input class="settings-input" type="number" id="lc-max" name="max_group_size" min="2" max="20" value="6">
+                </div>
+                <div class="settings-block">
+                  <label class="settings-block__label" for="lc-min">Min seats</label>
+                  <input class="settings-input" type="number" id="lc-min" name="min_group_size" min="1" max="20" value="2">
+                </div>
               </div>
-              <label class="settings-block">
-                <span class="settings-block__label">Group discount curve</span>
+              <div class="settings-block">
+                <label class="settings-block__label">Group discount curve</label>
                 <p class="settings-hint">Price drops for students as more join. Percentages are per-student discounts off the base price.</p>
                 <div id="discount-rows"></div>
                 <button type="button" class="btn btn--ghost" id="add-discount-row" style="margin-top:0.5rem;">+ Add tier</button>
-              </label>
+              </div>
             </div>
           </section>
 
+          <!-- STEP 5 -->
           <section class="wizard__panel" data-panel="5">
-            <h3 style="color:#fff;margin-bottom:1rem;">Preview</h3>
-            <div id="preview-card" class="lesson-card" style="max-width:340px;"></div>
+            <h3 class="wizard__preview-title">Preview</h3>
+            <p class="settings-hint" style="margin-bottom:1rem;">This is exactly how your lesson will look in the feed.</p>
+            <div id="preview-card" class="lesson-card lesson-card--preview"></div>
             <div class="wizard__final-actions">
               <button type="button" class="btn btn--ghost" id="save-draft">Save as draft</button>
               <button type="submit" class="btn btn--navy" id="publish-btn">Publish lesson</button>
@@ -198,8 +219,10 @@
   <script src="../js/notifications.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/supabase-mutations.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/currency.js"></script>
   <script src="../js/likes.js"></script>
-<script src="../js/reviews.js"></script>
+  <script src="../js/reviews.js"></script>
   <script src="../js/modals.js"></script>
   <script src="../js/topbar.js"></script>
   <script src="../js/sidebar.js"></script>

@@ -1,5 +1,5 @@
-/* ============================================
-   SKILLME2 — SUB-PAGE STYLES
+﻿/* ============================================
+   SKILLME2 â€” SUB-PAGE STYLES
    ============================================ */
 
 .page-head {
@@ -1065,4 +1065,778 @@
   background: var(--accent-teal);
   border-color: var(--accent-teal);
   color: #fff;
+}
+/* ============================================================
+   SKILLME2 - LESSON COUNTDOWN + ZOOM REVEAL
+   ============================================================ */
+.lesson-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  margin: 0.5rem 0;
+  background: rgba(201, 162, 74, 0.06);
+  border: 1px solid rgba(201, 162, 74, 0.25);
+  border-radius: 8px;
+  font-feature-settings: "tnum";
+}
+.lesson-countdown__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.lesson-countdown__value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.lesson-countdown.is-imminent {
+  background: rgba(20, 184, 122, 0.08);
+  border-color: rgba(20, 184, 122, 0.35);
+  animation: pulseCountdown 2s infinite;
+}
+.lesson-countdown.is-imminent .lesson-countdown__value {
+  color: var(--accent-green);
+}
+@keyframes pulseCountdown {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 122, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(20, 184, 122, 0); }
+}
+
+.lesson-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+}
+.lesson-zoom-row__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 999px;
+  color: #FCA5A5;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Signed escrow display in wallet */
+.wallet-balance__value.is-pos { color: var(--accent-green); }
+.wallet-balance__value.is-neg { color: #FCA5A5; }
+/* ============================================================
+   SKILLME2 - MY CLASSES (lesson manage rows, booking cards)
+   Scoped styles for the classes rendered by js/my-classes.js
+   ============================================================ */
+
+/* ---------- LESSON MANAGE ROW ---------- */
+.lesson-manage-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+  flex-wrap: wrap;
+}
+.lesson-manage-row:hover {
+  border-color: rgba(201, 162, 74, 0.3);
+}
+
+.lesson-manage-row__cover {
+  width: 84px;
+  height: 62px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--navy-800);
+  flex-shrink: 0;
+}
+.lesson-manage-row__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lesson-manage-row__body {
+  flex: 1;
+  min-width: 200px;
+}
+.lesson-manage-row__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+}
+.lesson-manage-row__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+}
+.lesson-manage-row__status {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.lesson-manage-row__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  align-items: center;
+}
+.lesson-manage-row__actions .btn {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.78rem;
+}
+
+/* ---------- DASH LIST (stack of rows/cards) ---------- */
+.dash-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* ---------- BOOKING CARD ---------- */
+.booking-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.15rem 1.35rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--surface-line);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+}
+.booking-card:hover {
+  border-color: rgba(201, 162, 74, 0.3);
+}
+.booking-card--request {
+  border-color: rgba(201, 162, 74, 0.4);
+  background: rgba(201, 162, 74, 0.04);
+}
+
+.booking-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.booking-card__group {
+  padding: 0.22rem 0.6rem;
+  background: rgba(13, 115, 119, 0.15);
+  border: 1px solid rgba(126, 224, 184, 0.3);
+  color: var(--accent-mint);
+  font-size: 0.66rem;
+  font-weight: 700;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.booking-card__mid {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.booking-card__mid img {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--navy-800);
+  flex-shrink: 0;
+}
+.booking-card__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.15rem;
+}
+.booking-card__sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.booking-card__focus {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--gold);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.booking-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--surface-line);
+}
+.booking-card__actions .btn {
+  padding: 0.6rem 1.15rem;
+  font-size: 0.82rem;
+}
+.booking-card__price {
+  margin-left: auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-feature-settings: "tnum";
+}
+.booking-card__waiting {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ---------- STATUS PILLS ---------- */
+.status-pill {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.status-pill--pending {
+  background: rgba(201, 162, 74, 0.15);
+  color: var(--gold);
+  border: 1px solid rgba(201, 162, 74, 0.3);
+}
+.status-pill--confirmed {
+  background: rgba(13, 115, 119, 0.2);
+  color: var(--accent-mint);
+  border: 1px solid rgba(126, 224, 184, 0.3);
+}
+.status-pill--completed {
+  background: rgba(20, 184, 122, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(20, 184, 122, 0.3);
+}
+.status-pill--cancelled {
+  background: rgba(239, 68, 68, 0.12);
+  color: #FCA5A5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ---------- AVAILABILITY EDITOR ---------- */
+.avail-editor {
+  padding: 0;
+}
+.avail-editor__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.avail-editor__head .page-desc { margin: 0; }
+
+.avail-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+@media (max-width: 900px) {
+  .avail-grid {
+    grid-template-columns: repeat(7, minmax(72px, 1fr));
+  }
+}
+
+.avail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.avail-col__head {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding-bottom: 0.5rem;
+}
+
+.avail-slot {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--surface-line);
+  border-radius: 6px;
+  font-feature-settings: "tnum";
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.avail-slot:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.avail-slot.is-on {
+  background: rgba(13, 115, 119, 0.2);
+  border-color: var(--accent-teal);
+  color: var(--accent-mint);
+}
+
+/* ---------- EMPTY STATE ---------- */
+.dash-empty {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  border: 1px dashed var(--surface-line-strong);
+  border-radius: 12px;
+}
+.dash-empty a {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ---------- CREATE DROPDOWN ---------- */
+.mc-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+.create-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 50;
+  min-width: 320px;
+  background: var(--navy-850);
+  border: 1px solid var(--surface-line-strong);
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+.create-dropdown[hidden] { display: none; }
+.create-dropdown a {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+  text-decoration: none;
+}
+.create-dropdown a:hover { background: var(--surface-panel-hover); }
+.create-dropdown svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--gold);
+}
+.create-dropdown strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.create-dropdown span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ---------- COUNTDOWN + ZOOM ---------- */
+.lesson-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  background: rgba(201, 162, 74, 0.06);
+  border: 1px solid rgba(201, 162, 74, 0.25);
+  border-radius: 8px;
+  font-feature-settings: "tnum";
+}
+.lesson-countdown__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+.lesson-countdown__value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.lesson-countdown.is-imminent {
+  background: rgba(20, 184, 122, 0.08);
+  border-color: rgba(20, 184, 122, 0.35);
+}
+.lesson-countdown.is-imminent .lesson-countdown__value {
+  color: var(--accent-green);
+}
+
+.lesson-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+}
+.lesson-zoom-row__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 999px;
+  color: #FCA5A5;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 720px) {
+  .lesson-manage-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .lesson-manage-row__cover {
+    width: 100%;
+    height: 160px;
+  }
+  .lesson-manage-row__actions {
+    width: 100%;
+  }
+  .lesson-manage-row__actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .booking-card__actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .booking-card__price {
+    margin-left: 0;
+    width: 100%;
+    text-align: right;
+  }
+  .create-dropdown {
+    left: 0;
+    right: 0;
+    min-width: auto;
+  }
+}
+/* ============================================================
+   SKILLME2 - CHIPS (visible filter pills)
+   ============================================================ */
+.chips-wrap {
+  position: sticky;
+  top: 64px;
+  z-index: 50;
+  background: var(--navy-950);
+  padding: 1.25rem 0 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--surface-line);
+}
+
+.chips {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+.chip:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(255, 255, 255, 0.06);
+}
+.chip.is-active {
+  background: #fff;
+  border-color: #fff;
+  color: var(--navy-950);
+  font-weight: 700;
+}
+
+/* ============================================================
+   SKILLME2 - SECTION TITLES INSIDE MY CLASSES
+   ============================================================ */
+.mc-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin: 1.5rem 0 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.mc-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--surface-line);
+}
+.mc-section-title:first-child { margin-top: 0; }
+
+.mc-section-title__count {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.mc-section {
+  margin-bottom: 2rem;
+}
+.mc-section:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   SKILLME2 - COURSE ROW (distinct from lesson rows)
+   ============================================================ */
+.course-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.15rem 1.35rem;
+  background: linear-gradient(135deg, rgba(201, 162, 74, 0.06), var(--surface-panel));
+  border: 1px solid rgba(201, 162, 74, 0.25);
+  border-radius: 12px;
+  transition: border-color 0.15s ease;
+  flex-wrap: wrap;
+}
+.course-row:hover {
+  border-color: rgba(201, 162, 74, 0.5);
+}
+.course-row__cover {
+  width: 96px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--navy-800);
+  flex-shrink: 0;
+}
+.course-row__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.course-row__body {
+  flex: 1;
+  min-width: 200px;
+}
+.course-row__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.35rem;
+}
+.course-row__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.3rem;
+}
+.course-row__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.45rem;
+}
+.course-row__status {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.course-row__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  align-items: center;
+}
+.course-row__actions .btn {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 720px) {
+  .course-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .course-row__cover {
+    width: 100%;
+    height: 160px;
+  }
+  .course-row__actions { width: 100%; }
+  .course-row__actions .btn { flex: 1; justify-content: center; }
+}
+/* ============================================================
+   SKILLME2 - MY CLASSES TABS + SUBTABS
+   The filter controls on my-classes.html. Styled from scratch
+   because the previous styles were removed during cleanup.
+   ============================================================ */
+
+/* ---------- MAIN TABS (Taking / Teaching / Courses) ---------- */
+.tabs {
+  display: flex !important;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 1.5rem 0 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0;
+}
+.tabs::-webkit-scrollbar { display: none; height: 0; }
+
+.tabs__item {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem 1.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -1px;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.tabs__item:hover {
+  color: #ffffff !important;
+}
+.tabs__item.is-active {
+  color: #C9A24A !important;
+  border-bottom-color: #C9A24A !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- SUBTABS (pill-shaped filters) ---------- */
+.subtabs {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  margin: 1.5rem 0 1.25rem !important;
+  padding: 0 0 0.35rem 0 !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: transparent !important;
+  border: none !important;
+}
+.subtabs::-webkit-scrollbar { display: none; height: 0; }
+
+.subtabs__item {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  min-height: 34px;
+  padding: 0.55rem 1.15rem !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 999px !important;
+  font-size: 0.825rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.subtabs__item:hover {
+  background: rgba(201, 162, 74, 0.15) !important;
+  border-color: #C9A24A !important;
+  color: #C9A24A !important;
+}
+
+.subtabs__item.is-active {
+  background: #C9A24A !important;
+  border-color: #C9A24A !important;
+  color: #030A12 !important;
+  font-weight: 700 !important;
+}
+
+.subtabs__item.is-active:hover {
+  background: #E4C77E !important;
+  border-color: #E4C77E !important;
+  color: #030A12 !important;
+}
+
+/* ---------- TAB PANELS ---------- */
+.tab-panel {
+  display: none;
+}
+.tab-panel.is-active {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .tabs__item {
+    padding: 0.75rem 1.1rem !important;
+    font-size: 0.82rem !important;
+  }
+  .subtabs__item {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.78rem !important;
+  }
 }

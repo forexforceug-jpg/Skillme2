@@ -1,0 +1,70 @@
+﻿/* ============================================================
+   SKILLME2 - CHIPS (filter pills)
+   Loaded last so nothing overrides these rules.
+   ============================================================ */
+
+.chips-wrap {
+  position: sticky;
+  top: 64px;
+  z-index: 50;
+  background: #030A12;
+  padding: 1.25rem 0 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  overflow: hidden;
+}
+
+.chips {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+  margin: 0;
+  list-style: none;
+}
+.chips::-webkit-scrollbar { display: none; height: 0; }
+
+.chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  min-height: 34px;
+  padding: 0.55rem 1.1rem !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 999px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.chip:hover {
+  background: rgba(201, 162, 74, 0.15) !important;
+  border-color: #C9A24A !important;
+  color: #C9A24A !important;
+}
+
+.chip.is-active {
+  background: #C9A24A !important;
+  border-color: #C9A24A !important;
+  color: #030A12 !important;
+  font-weight: 700 !important;
+}
+
+.chip.is-active:hover {
+  background: #E4C77E !important;
+  border-color: #E4C77E !important;
+  color: #030A12 !important;
+}
