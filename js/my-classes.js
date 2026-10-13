@@ -9,6 +9,65 @@
   let session = null;
   let countdownInterval = null;
 
+  // ------------------------------------------------------------
+  // JITSI CONFIG
+  // ------------------------------------------------------------
+  // Using the free public server. When you migrate to a self-hosted
+  // instance with JWT auth, swap the URL and append the token.
+  const JITSI_DOMAIN = "meet.jit.si";
+
+  // Generates a deterministic room name from the booking id.
+  // Both student and mentor derive the same room from the same id,
+  // so no server-side storage is strictly required — but we save it
+  // in bookings.jitsi_room_url so the URL can be audited later.
+  function jitsiRoomFor(bookingId) {
+    // Jitsi room names must be URL-safe. UUIDs already are.
+    return `skillme2-${bookingId}`;
+  }
+
+  function jitsiUrlFor(bookingId, { forHost = false } = {}) {
+    const room = jitsiRoomFor(bookingId);
+    // Config flags disable unneeded UI so the room feels focused.
+    const params = new URLSearchParams({
+      "config.prejoinPageEnabled": "false",
+      "config.startWithAudioMuted": "false",
+      "config.startWithVideoMuted": "false",
+      "config.disableDeepLinking": "true",
+    });
+    if (forHost) params.set("config.startWithAudioMuted", "true");
+    return `https://${JITSI_DOMAIN}/${room}#${params.toString()}`;
+  }
+
+  // Persist the room URL the first time it is generated.
+  async function ensureJitsiRoomUrl(bookingId) {
+    const { data: existing } = await db
+      .from("bookings")
+      .select("jitsi_room_url")
+      .eq("id", bookingId)
+      .single();
+
+    if (existing?.jitsi_room_url) return existing.jitsi_room_url;
+
+    const url = jitsiUrlFor(bookingId);
+    await db.from("bookings").update({ jitsi_room_url: url }).eq("id", bookingId);
+    return url;
+  }
+
+  async function openJitsiRoom(bookingId, { forHost = false } = {}) {
+    try {
+      const url = await ensureJitsiRoomUrl(bookingId);
+      const target = forHost
+        ? url.replace("#", "#config.startWithAudioMuted=true&")
+        : url;
+      window.open(target, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      toast(err.message || "Could not open the lesson room.");
+    }
+  }
+
+  // ------------------------------------------------------------
+  // INIT
+  // ------------------------------------------------------------
   async function init() {
     session = await auth.requireAuth();
     if (!session) return;
@@ -186,7 +245,7 @@
         </div>
         <div class="lesson-manage-row__body">
           <div class="lesson-manage-row__title">${h.escapeHtml(l.title)}</div>
-          <div class="lesson-manage-row__meta">${l.categories?.name || "No category"} · ${l.duration_minutes} min · ${Number(l.price).toFixed(2)}</div>
+          <div class="lesson-manage-row__meta">${l.categories?.name || "No category"} · ${l.duration_minutes} min · $${Number(l.price).toFixed(2)}</div>
           <div class="lesson-manage-row__status">
             <span class="status-pill status-pill--${l.status === "published" ? "completed" : l.status === "draft" ? "pending" : "cancelled"}">${l.status}</span>
             <span>${l.booking_count || 0} bookings</span>
@@ -203,35 +262,21 @@
 
     container.innerHTML = `
       <div class="mc-section">
-        <h2 class="mc-section-title">
-          Published
-          <span class="mc-section-title__count">${published.length}</span>
-        </h2>
-        ${published.length
-          ? `<div class="dash-list">${published.map(renderRow).join("")}</div>`
-          : `<div class="dash-empty"><p>No published lessons yet. Publish a draft to make it visible in the feed.</p></div>`}
+        <h2 class="mc-section-title">Published <span class="mc-section-title__count">${published.length}</span></h2>
+        ${published.length ? `<div class="dash-list">${published.map(renderRow).join("")}</div>` : `<div class="dash-empty"><p>No published lessons yet.</p></div>`}
       </div>
-
       ${drafts.length ? `
         <div class="mc-section">
-          <h2 class="mc-section-title">
-            Drafts
-            <span class="mc-section-title__count">${drafts.length}</span>
-          </h2>
+          <h2 class="mc-section-title">Drafts <span class="mc-section-title__count">${drafts.length}</span></h2>
           <div class="dash-list">${drafts.map(renderRow).join("")}</div>
         </div>
       ` : ""}
-
       ${archived.length ? `
         <div class="mc-section">
-          <h2 class="mc-section-title">
-            Archived
-            <span class="mc-section-title__count">${archived.length}</span>
-          </h2>
+          <h2 class="mc-section-title">Archived <span class="mc-section-title__count">${archived.length}</span></h2>
           <div class="dash-list">${archived.map(renderRow).join("")}</div>
         </div>
       ` : ""}
-
       <div class="mc-section" style="margin-top:2rem;">
         <a href="lesson-create.html" class="btn btn--navy">+ Create another lesson</a>
       </div>
@@ -372,25 +417,15 @@
 
     container.innerHTML = `
       <div class="mc-section">
-        <h2 class="mc-section-title">
-          Published Courses
-          <span class="mc-section-title__count">${published.length}</span>
-        </h2>
-        ${published.length
-          ? `<div class="dash-list">${published.map(renderRow).join("")}</div>`
-          : `<div class="dash-empty"><p>No published courses yet.</p></div>`}
+        <h2 class="mc-section-title">Published Courses <span class="mc-section-title__count">${published.length}</span></h2>
+        ${published.length ? `<div class="dash-list">${published.map(renderRow).join("")}</div>` : `<div class="dash-empty"><p>No published courses yet.</p></div>`}
       </div>
-
       ${drafts.length ? `
         <div class="mc-section">
-          <h2 class="mc-section-title">
-            Draft Courses
-            <span class="mc-section-title__count">${drafts.length}</span>
-          </h2>
+          <h2 class="mc-section-title">Draft Courses <span class="mc-section-title__count">${drafts.length}</span></h2>
           <div class="dash-list">${drafts.map(renderRow).join("")}</div>
         </div>
       ` : ""}
-
       <div class="mc-section" style="margin-top:2rem;">
         <a href="course-create.html" class="btn btn--navy">+ Create another course</a>
       </div>
@@ -410,12 +445,12 @@
     const msUntil = startMs - now;
     const TEN_MIN = 10 * 60 * 1000;
 
-    const showZoom = status === "confirmed" && msUntil <= TEN_MIN && msUntil > -2 * 60 * 60 * 1000;
+    const showJoin = status === "confirmed" && msUntil <= TEN_MIN && msUntil > -2 * 60 * 60 * 1000;
     const showCountdown = status === "confirmed" && msUntil > 0;
     const canConfirm = status === "confirmed" && now > endMs;
 
     return `
-      <div class="booking-card" data-booking="${b.id}" data-start="${b.scheduled_at}" data-end-ms="${endMs}">
+      <div class="booking-card" data-booking="${b.id}" data-start="${b.scheduled_at}" data-end-ms="${endMs}" data-view-as="${viewAs}">
         <div class="booking-card__top">
           <span class="status-pill status-pill--${statusPillClass(status)}">${statusLabel(status)}</span>
           <span>${h.fmtDate(b.scheduled_at)} · ${b.duration_minutes} min</span>
@@ -437,14 +472,14 @@
           </div>
         ` : ""}
 
-        ${showZoom ? `
+        ${showJoin ? `
           <div class="lesson-zoom-row">
-            <span class="lesson-zoom-row__live"><span class="live-dot"></span> Live now</span>
+            <span class="lesson-zoom-row__live"><span class="live-dot"></span> Room open</span>
           </div>
         ` : ""}
 
         <div class="booking-card__actions">
-          ${showZoom ? `<button class="btn btn--navy" data-join="${b.id}">Join Zoom</button>` : ""}
+          ${showJoin ? `<button class="btn btn--navy" data-join="${b.id}">Join Room</button>` : ""}
           ${canConfirm ? `<button class="btn btn--navy" data-confirm="${b.id}">Confirm completion</button>` : ""}
           ${status === "pending" && viewAs === "student" ? `<span class="booking-card__waiting">Waiting for teacher to accept…</span>` : ""}
           ${status === "pending" && viewAs === "teacher" ? `
@@ -486,7 +521,9 @@
 
   function wireBookingActions(container, viewAs) {
     container.querySelectorAll("[data-join]").forEach(btn => {
-      btn.addEventListener("click", () => toast("Zoom link will open in a new tab."));
+      btn.addEventListener("click", () => {
+        openJitsiRoom(btn.dataset.join, { forHost: viewAs === "teacher" });
+      });
     });
     container.querySelectorAll("[data-confirm]").forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -528,7 +565,7 @@
   }
 
   // ============================================================
-  // LIVE COUNTDOWN
+  // LIVE COUNTDOWN — reveals Join Room button 10 min before
   // ============================================================
   function startCountdownLoop() {
     if (countdownInterval) clearInterval(countdownInterval);
@@ -561,6 +598,39 @@
         : `${mn}:${String(sc).padStart(2,"0")}`;
 
       el.classList.toggle("is-imminent", ms <= 10 * 60 * 1000);
+    });
+
+    // Live-reveal the Join Room button when the 10-minute window opens
+    document.querySelectorAll("[data-booking]").forEach(card => {
+      const startMs = new Date(card.dataset.start).getTime();
+      const msUntil = startMs - Date.now();
+      const isConfirmed = card.querySelector(".status-pill--confirmed");
+      if (!isConfirmed) return;
+      if (msUntil > 10 * 60 * 1000 || msUntil < -2 * 60 * 60 * 1000) return;
+
+      const existingJoin = card.querySelector("[data-join]");
+      const existingRow = card.querySelector(".lesson-zoom-row");
+      const actions = card.querySelector(".booking-card__actions");
+      if (!actions) return;
+
+      if (!existingJoin) {
+        const viewAs = card.dataset.viewAs;
+        const btn = document.createElement("button");
+        btn.className = "btn btn--navy";
+        btn.dataset.join = card.dataset.booking;
+        btn.textContent = "Join Room";
+        btn.addEventListener("click", () => {
+          openJitsiRoom(card.dataset.booking, { forHost: viewAs === "teacher" });
+        });
+        actions.prepend(btn);
+      }
+
+      if (!existingRow) {
+        const row = document.createElement("div");
+        row.className = "lesson-zoom-row";
+        row.innerHTML = `<span class="lesson-zoom-row__live"><span class="live-dot"></span> Room open</span>`;
+        actions.parentElement.insertBefore(row, actions);
+      }
     });
   }
 
