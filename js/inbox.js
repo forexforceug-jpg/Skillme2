@@ -5,6 +5,8 @@
   const h = window.Skillme2.helpers;
   const toast = window.Skillme2.toast;
 
+  const SYSTEM_PARTNER_ID = "__system__";
+
   let session = null;
   let conversations = [];
   let activePartnerId = null;
@@ -29,6 +31,7 @@
   }
 
   async function loadConversations(silent = false) {
+    // 1. User-to-user messages
     const { data: messages } = await db
       .from("messages")
       .select("id, sender_id, recipient_id, body, read_at, created_at")
@@ -53,7 +56,33 @@
       }
     });
 
-    const ids = Array.from(byPartner.keys());
+    // 2. Admin notifications — merged as a synthetic "Skillme2 Team" conversation
+    const { data: notifications } = await db
+      .from("notifications")
+      .select("id, type, title, body, link, read_at, created_at")
+      .eq("profile_id", session.id)
+      .order("created_at", { ascending: false });
+
+    if (notifications && notifications.length) {
+      const latest = notifications[0];
+      const unread = notifications.filter(n => !n.read_at).length;
+      byPartner.set(SYSTEM_PARTNER_ID, {
+        partner_id: SYSTEM_PARTNER_ID,
+        name: "Skillme2 Team",
+        avatar_url: null,
+        is_system: true,
+        last_body: latest.title
+          ? `${latest.title} — ${latest.body || ""}`
+          : latest.body || "",
+        last_at: latest.created_at,
+        last_from_me: false,
+        last_read: !!latest.read_at,
+        unread_count: unread,
+      });
+    }
+
+    // 3. Hydrate real profiles
+    const ids = Array.from(byPartner.keys()).filter(id => id !== SYSTEM_PARTNER_ID);
     if (ids.length) {
       const { data: profiles } = await db
         .from("profiles")
@@ -65,7 +94,11 @@
       });
     }
 
-    conversations = Array.from(byPartner.values());
+    // 4. Sort by most recent activity
+    conversations = Array.from(byPartner.values()).sort(
+      (a, b) => new Date(b.last_at) - new Date(a.last_at)
+    );
+
     if (!silent) renderConversations();
   }
 
@@ -83,12 +116,15 @@
       const check = c.last_from_me
         ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m2 12 5 5L18 6"/><path d="m9 17 10-10"/></svg>`
         : "";
+      const avatarHtml = c.is_system
+        ? `<div class="wa__conv-avatar" style="background:#C9A24A;color:#061019;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;width:49px;height:49px;border-radius:50%;">S2</div>`
+        : `<div class="wa__conv-avatar">
+             <img src="${c.avatar_url || `https://i.pravatar.cc/100?u=${c.partner_id}`}" alt="">
+             ${c.unread_count > 0 ? `<span class="wa__conv-unread-dot"></span>` : ""}
+           </div>`;
       return `
         <div class="wa__conv ${activePartnerId === c.partner_id ? "is-active" : ""}" data-partner="${c.partner_id}">
-          <div class="wa__conv-avatar">
-            <img src="${c.avatar_url || `https://i.pravatar.cc/100?u=${c.partner_id}`}" alt="">
-            ${c.unread_count > 0 ? `<span class="wa__conv-unread-dot"></span>` : ""}
-          </div>
+          ${avatarHtml}
           <div class="wa__conv-body">
             <div class="wa__conv-head">
               <span class="wa__conv-name">${h.escapeHtml(c.name || "User")}</span>
@@ -112,6 +148,45 @@
   async function loadThread(partnerId, silent = false) {
     activePartnerId = partnerId;
 
+    // System thread: render notifications
+    if (partnerId === SYSTEM_PARTNER_ID) {
+      const { data: notifs } = await db
+        .from("notifications")
+        .select("*")
+        .eq("profile_id", session.id)
+        .order("created_at", { ascending: true });
+
+      const unreadIds = (notifs || []).filter(n => !n.read_at).map(n => n.id);
+      if (unreadIds.length) {
+        await db.from("notifications")
+          .update({ read_at: new Date().toISOString() })
+          .in("id", unreadIds);
+      }
+
+      const partner = {
+        id: SYSTEM_PARTNER_ID,
+        name: "Skillme2 Team",
+        avatar_url: null,
+        is_teacher: false,
+        is_system: true,
+      };
+
+      const threadEl = document.getElementById("inbox-thread");
+      if (threadEl) threadEl.dataset.partner = partnerId;
+
+      if (!silent) {
+        renderSystemThread(partner, notifs || []);
+        document.querySelector(".wa")?.classList.add("is-thread-open");
+        document.querySelectorAll(".wa__conv").forEach(c => {
+          c.classList.toggle("is-active", c.dataset.partner === partnerId);
+        });
+      } else {
+        renderSystemMessagesOnly(notifs || []);
+      }
+      return;
+    }
+
+    // Regular user-to-user thread
     const { data: messages } = await db
       .from("messages")
       .select("*")
@@ -136,8 +211,7 @@
 
     if (!silent) {
       renderThread(partner, messages || []);
-      const wa = document.querySelector(".wa");
-      wa?.classList.add("is-thread-open");
+      document.querySelector(".wa")?.classList.add("is-thread-open");
       document.querySelectorAll(".wa__conv").forEach(c => {
         c.classList.toggle("is-active", c.dataset.partner === partnerId);
       });
@@ -190,10 +264,45 @@
     wireBack();
   }
 
+  function renderSystemThread(partner, notifications) {
+    const thread = document.getElementById("inbox-thread");
+
+    thread.innerHTML = `
+      <div class="wa__thread-head">
+        <button class="wa__thread-back" data-back aria-label="Back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <div class="wa__thread-avatar" style="width:40px;height:40px;border-radius:50%;background:#C9A24A;color:#061019;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;">S2</div>
+        <div class="wa__thread-info">
+          <strong>Skillme2 Team</strong>
+          <span>Official announcements</span>
+        </div>
+      </div>
+
+      <div class="wa__messages" id="messages-body">
+        ${renderSystemMessages(notifications)}
+      </div>
+
+      <div class="wa__composer" style="opacity:0.5;pointer-events:none;">
+        <input type="text" class="wa__composer-input" placeholder="This is a read-only channel" disabled>
+      </div>
+    `;
+
+    scrollMessagesToBottom();
+    wireBack();
+  }
+
   function renderMessagesOnly(messages) {
     const body = document.getElementById("messages-body");
     if (!body) return;
     body.innerHTML = renderMessages(messages);
+    scrollMessagesToBottom();
+  }
+
+  function renderSystemMessagesOnly(notifications) {
+    const body = document.getElementById("messages-body");
+    if (!body) return;
+    body.innerHTML = renderSystemMessages(notifications);
     scrollMessagesToBottom();
   }
 
@@ -220,6 +329,42 @@
           <div class="wa__msg-bubble">
             ${h.escapeHtml(m.body)}
             <span class="wa__msg-meta">${time}${check}</span>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderSystemMessages(notifications) {
+    if (!notifications.length) {
+      return `<div class="wa__empty"><p>No announcements yet.</p></div>`;
+    }
+
+    let lastDay = "";
+    return notifications.map(n => {
+      const day = new Date(n.created_at).toDateString();
+      const daySeparator = day !== lastDay
+        ? `<div class="wa__day">${new Date(n.created_at).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" })}</div>`
+        : "";
+      lastDay = day;
+
+      const time = new Date(n.created_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+      const title = n.title
+        ? `<div style="font-weight:700;margin-bottom:4px;">${h.escapeHtml(n.title)}</div>`
+        : "";
+      const body = h.escapeHtml(n.body || "");
+      const link = n.link
+        ? `<a href="${n.link}" style="color:#53bdeb;font-size:12px;margin-top:6px;display:inline-block;">Open →</a>`
+        : "";
+
+      return `
+        ${daySeparator}
+        <div class="wa__msg wa__msg--in">
+          <div class="wa__msg-bubble">
+            ${title}
+            ${body}
+            ${link}
+            <span class="wa__msg-meta">${time}</span>
           </div>
         </div>
       `;
